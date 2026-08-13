@@ -73,6 +73,8 @@ end
 hl.on("hyprland.start", function ()
 -- Restore wallpaper as early as possible.
   hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/awww-startup")
+-- Hyprlock first thing
+  hl.exec_cmd("hyprlock --immediate-render --no-fade-in")
   hl.exec_cmd("waybar & swaync & hypridle")
 -- Give user services the current Hyprland/Wayland environment
   hl.exec_cmd(

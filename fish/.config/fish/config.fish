@@ -19,3 +19,10 @@ function nnn
         kitty @ set-colors --all ~/.cache/wal/colors-kitty.conf 2>/dev/null
     end
 end
+
+# Automatically start Hyprland on TTY1 login
+if status is-login
+    if test (tty) = /dev/tty1
+        exec start-hyprland
+    end
+end
