@@ -1,42 +1,50 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 NNN_SOCKET="unix:@desktop-nnn"
 TERMINAL_SOCKET="unix:@desktop-terminal"
+RMPC_SOCKET="unix:@desktop-rmpc"
 
 show_widgets() {
     kitten @ --to="$NNN_SOCKET" \
-        resize-os-window --action=show \
-        >/dev/null 2>&1 || true
+        resize-os-window --action=show >/dev/null 2>&1 || true
 
     kitten @ --to="$TERMINAL_SOCKET" \
-        resize-os-window --action=show \
-        >/dev/null 2>&1 || true
+        resize-os-window --action=show >/dev/null 2>&1 || true
+
+    kitten @ --to="$RMPC_SOCKET" \
+        resize-os-window --action=show >/dev/null 2>&1 || true
 }
 
 hide_widgets() {
     kitten @ --to="$NNN_SOCKET" \
-        resize-os-window --action=hide \
-        >/dev/null 2>&1 || true
+        resize-os-window --action=hide >/dev/null 2>&1 || true
 
     kitten @ --to="$TERMINAL_SOCKET" \
-        resize-os-window --action=hide \
-        >/dev/null 2>&1 || true
+        resize-os-window --action=hide >/dev/null 2>&1 || true
+
+    kitten @ --to="$RMPC_SOCKET" \
+        resize-os-window --action=hide >/dev/null 2>&1 || true
 }
 
 update_widgets() {
     ACTIVE_WS=$(hyprctl activeworkspace -j | jq -r '.id')
 
-WINDOW_COUNT=$(
-    hyprctl clients -j |
-    jq --argjson ws "$ACTIVE_WS" '
-        [
-            .[]
-            | select(.workspace.id == $ws)
-            | select(((.class // "") | ascii_downcase) != "waypaper")
-        ]
-        | length
-    '
-)
+    WINDOW_COUNT=$(
+        hyprctl clients -j |
+        jq --argjson ws "$ACTIVE_WS" '
+            [
+                .[]
+                | select(.workspace.id == $ws)
+
+                # Waypaper does not hide desktop widgets
+                | select(
+                    ((.class // "") | ascii_downcase)
+                    != "waypaper"
+                )
+            ]
+            | length
+        '
+    )
 
     if [ "$WINDOW_COUNT" -eq 0 ]; then
         show_widgets
@@ -45,17 +53,17 @@ WINDOW_COUNT=$(
     fi
 }
 
-# Wait until both Kitty panel sockets are ready.
-for _ in {1..40}; do
+# Wait briefly for all Kitty widget sockets to become available.
+for _ in $(seq 1 40); do
     if kitten @ --to="$NNN_SOCKET" ls >/dev/null 2>&1 &&
-       kitten @ --to="$TERMINAL_SOCKET" ls >/dev/null 2>&1; then
+       kitten @ --to="$TERMINAL_SOCKET" ls >/dev/null 2>&1 &&
+       kitten @ --to="$RMPC_SOCKET" ls >/dev/null 2>&1; then
         break
     fi
 
     sleep 0.05
 done
 
-# Set correct initial visibility.
 update_widgets
 
 SOCKET="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
@@ -64,7 +72,6 @@ socat -U - "UNIX-CONNECT:$SOCKET" |
 while read -r event; do
     case "$event" in
         openwindow*|closewindow*|movewindow*|workspace*|focusedmon*)
-            # Tiny delay so Hyprland's client list reflects the event.
             sleep 0.02
             update_widgets
             ;;

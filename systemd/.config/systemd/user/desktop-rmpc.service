@@ -1,0 +1,10 @@
+[Unit]
+Description=Desktop RMPC Widget
+Wants=mpd.service
+After=mpd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/kitten panel --edge=none --layer=bottom --app-id=desktop-rmpc --focus-policy=on-demand --columns=60 --lines=12 --margin-left=14 --margin-top=804 -o background_opacity=0.75 -o window_padding_width=8 -o allow_remote_control=socket-only --listen-on=unix:@desktop-rmpc /usr/bin/rmpc
+Restart=always
+RestartSec=1

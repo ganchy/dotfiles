@@ -1,7 +1,7 @@
 [Unit]
 Description=Hyprland Desktop Widget Visibility Controller
-Wants=desktop-nnn.service desktop-terminal.service
-After=desktop-nnn.service desktop-terminal.service
+Wants=desktop-nnn.service desktop-terminal.service desktop-rmpc.service
+After=desktop-nnn.service desktop-terminal.service desktop-rmpc.service
 
 [Service]
 Type=simple
