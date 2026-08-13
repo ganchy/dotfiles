@@ -1,0 +1,171 @@
+@import url("file:///home/ganchy/.cache/wal/colors-waybar.css");
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", monospace;
+    font-weight: 700;
+}
+
+/* MAIN BAR */
+
+#waybar {
+background: @background;
+color: @foreground;
+}
+
+/* TOOLTIPS */
+
+tooltip {
+    background: @color0;
+    border: 1px solid @color8;
+    border-radius: 6px;
+}
+
+tooltip label {
+    color: @foreground;
+    padding: 4px 8px;
+}
+
+
+/* =========================
+ * LEFT MODULES
+ * ========================= */
+
+#clock {
+color: @foreground;
+}
+
+#workspaces button {
+color: @color8;
+padding-left: 4px;
+padding-right: 4px;
+border-radius: 0px;
+}
+
+#workspaces button:hover {
+background-color: @color0;
+color: @foreground;
+}
+
+#workspaces button.active {
+color: @color4;
+border: 1px solid @color4;
+border-radius: 4px;
+padding-left: 6px;
+padding-right: 6px;
+}
+
+#workspaces button.urgent {
+color: @color1;
+}
+
+#tray {
+padding-left: 4px;
+}
+
+
+/* =========================
+ * CENTER MODULE
+ * ========================= */
+
+#window {
+color: @foreground;
+}
+
+
+/* =========================
+ * RIGHT MODULES
+ * ========================= */
+
+#custom-updates {
+color: @color2;
+}
+
+#temperature {
+color: @color3;
+}
+
+#temperature.critical {
+color: @color1;
+}
+
+#memory {
+color: @color5;
+}
+
+#cpu {
+color: @color4;
+}
+
+#pulseaudio {
+color: @color6;
+}
+
+#pulseaudio.muted {
+color: @color8;
+}
+
+#battery {
+color: @foreground;
+}
+
+#battery.charging,
+#battery.plugged {
+color: @color2;
+}
+
+#battery.warning {
+color: @color3;
+}
+
+#battery.critical:not(.charging) {
+color: @color1;
+}
+
+#custom-nightmode {
+color: @color3;
+}
+
+#custom-bluetooth {
+color: @color6;
+}
+
+#network {
+color: @color4;
+}
+
+#network.disconnected {
+color: @color1;
+}
+
+#custom-powermenu {
+color: @color1;
+}
+
+/* Consistent spacing between right-side modules */
+#custom-updates,
+#temperature,
+#memory,
+#cpu,
+#pulseaudio,
+#battery,
+#custom-nightmode,
+#custom-bluetooth,
+#network {
+margin-right: 10px;
+}
+
+/* Keep the final module away from the monitor edge */
+#custom-powermenu {
+margin-left: 4px;
+margin-right: 4px;
+padding: 0;
+}
+
+
+.modules-left {
+    margin-left: 6px;
+}
+
+.modules-right {
+    margin-right: 6px;
+}
