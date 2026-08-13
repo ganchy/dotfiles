@@ -1,0 +1,57 @@
+@import url("file:///home/ganchy/.cache/wal/colors-wofi.css");
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+}
+
+window {
+    margin: 0px;
+    border: 2px solid @color5;
+    border-radius: 12px;
+    background-color: @background;
+    color: @foreground;
+}
+
+#input {
+margin: 12px;
+padding: 10px;
+border-radius: 8px;
+background-color: @color0;
+color: @foreground;
+}
+
+#inner-box {
+margin: 8px;
+background-color: @background;
+}
+
+#outer-box {
+padding: 8px;
+background-color: @background;
+}
+
+#scroll {
+background-color: @background;
+}
+
+#entry {
+padding: 8px;
+margin: 3px;
+border-radius: 8px;
+background-color: transparent;
+}
+
+#entry:selected {
+background-color: @color5;
+}
+
+#entry:selected #text {
+color: @background;
+}
+
+#text {
+color: @foreground;
+}
+
+
