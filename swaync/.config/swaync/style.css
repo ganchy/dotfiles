@@ -1,0 +1,125 @@
+@import url("file:///home/ganchy/.cache/wal/colors-waybar.css");
+
+/* -------------------------
+ *  Pywal overrides
+ *  ------------------------- */
+
+.control-center {
+    background-color: alpha(@background, 0.88);
+    color: @foreground;
+}
+
+.notification-row .notification-background {
+    background-color: alpha(@background, 0.88);
+    color: @foreground;
+}
+
+.notification {
+    background-color: transparent;
+    color: @foreground;
+}
+
+.notification-content {
+    background-color: transparent;
+}
+
+.summary {
+    color: @foreground;
+}
+
+.body {
+    color: alpha(@foreground, 0.80);
+}
+
+.time {
+    color: alpha(@foreground, 0.65);
+}
+
+.close-button {
+    background-color: alpha(@color1, 0.30);
+    color: @foreground;
+}
+
+.close-button:hover {
+    background-color: alpha(@color1, 0.55);
+}
+
+.widget-title {
+    color: @foreground;
+}
+
+.widget-title > button {
+    background-color: alpha(@color4, 0.25);
+    color: @foreground;
+}
+
+.widget-title > button:hover {
+    background-color: alpha(@color4, 0.45);
+}
+
+.widget-dnd {
+    color: @foreground;
+}
+
+.widget-dnd > switch {
+    background-color: alpha(@foreground, 0.15);
+}
+
+.widget-dnd > switch:checked {
+    background-color: @color4;
+}
+/* -------------------------
+ *  Flat pywal notifications
+ *  ------------------------- */
+
+.notification-row,
+.notification-row:hover,
+.notification-row:focus,
+.notification-row:active {
+    background: transparent;
+}
+
+.notification-row .notification-background,
+.notification-row:hover .notification-background,
+.notification-row:focus .notification-background,
+.notification-row:active .notification-background {
+    background-color: alpha(@background, 0.88);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.notification-row .notification,
+.notification-row:hover .notification,
+.notification-row:focus .notification,
+.notification-row:active .notification {
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.notification-content,
+.notification-content:hover {
+    background-color: transparent;
+    border-radius: 0;
+}
+
+/* Keep hover in the pywal palette instead of the default dark shade */
+.notification-row:hover .notification-background {
+    background-color: alpha(@background, 0.95);
+}
+
+/* Remove rounded action/button areas inside notifications */
+.notification-action,
+.notification-action:hover,
+.notification-default-action,
+.notification-default-action:hover {
+    border-radius: 0;
+}
+.notification-background:hover,
+.notification-row:hover .notification-background,
+.notification-default-action:hover,
+.notification-row:hover .notification-default-action {
+    background-color: alpha(@background, 0.95);
+    background-image: none;
+    box-shadow: none;
+}
