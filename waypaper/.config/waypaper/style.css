@@ -1,0 +1,101 @@
+@import url("file:///home/ganchy/.cache/wal/colors-waybar.css");
+
+/* Main Waypaper window */
+window {
+    background-color: alpha(@background, 0.96);
+    color: @foreground;
+}
+
+/* General text */
+label {
+    color: @foreground;
+}
+
+/* Buttons */
+button {
+    background-image: none;
+    background-color: @color8;
+    color: @foreground;
+    border-color: @color8;
+    border-radius: 6px;
+}
+
+button:hover {
+    background-color: @color4;
+    color: @color0;
+}
+
+button:checked,
+button:active {
+    background-color: @color5;
+    color: @color0;
+}
+
+/* Text fields */
+entry {
+    background-color: @color0;
+    color: @foreground;
+    border-color: @color8;
+}
+
+entry:focus {
+    border-color: @color4;
+}
+
+/* Drop-downs */
+combobox button {
+    background-color: @color8;
+    color: @foreground;
+}
+
+/* Scrollable wallpaper area */
+scrolledwindow {
+    background-color: @background;
+    border-width: 0;
+}
+
+/* Wallpaper thumbnail buttons */
+grid > button {
+    background-image: none;
+    background-color: transparent;
+    border-width: 0;
+    border-radius: 3px;
+    box-shadow: none;
+    padding: 1px;
+    margin: 1px;
+}
+
+grid > button:hover {
+    background-image: none;
+    background-color: transparent;
+    border: 2px solid @color6;
+    border-radius: 3px;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Currently selected wallpaper */
+grid > button.highlighted-button {
+    background-image: none;
+    background-color: transparent;
+    border: 2px solid @color4;
+    border-radius: 3px;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Scrollbars */
+scrollbar {
+    background-color: @background;
+}
+
+scrollbar slider {
+    background-color: @color8;
+    border-radius: 10px;
+    min-width: 6px;
+    min-height: 6px;
+}
+
+scrollbar slider:hover {
+    background-color: @color4;
+}
