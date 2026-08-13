@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+PY="$HOME/.local/share/pipx/venvs/waypaper/bin/python"
+
+if [ ! -x "$PY" ]; then
+    echo "Waypaper pipx environment not found."
+    exit 1
+fi
+
+APP="$("$PY" -c '
+import pathlib
+import waypaper
+print(pathlib.Path(waypaper.__file__).parent / "app.py")
+')"
+
+PATCH="$HOME/dotfiles/patches/waypaper/app.py.patch"
+
+if [ ! -f "$PATCH" ]; then
+    echo "Patch not found: $PATCH"
+    exit 1
+fi
+
+echo "Patching: $APP"
+patch --forward "$APP" < "$PATCH"
