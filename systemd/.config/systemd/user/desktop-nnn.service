@@ -1,0 +1,13 @@
+[Unit]
+Description=Desktop nnn Widget
+
+[Service]
+Type=simple
+
+ExecStart=/usr/bin/kitten panel --edge=none --layer=bottom --app-id=desktop-nnn --focus-policy=on-demand --columns=60 --lines=16 --margin-left=14 --margin-top=46 -o background_opacity=0.75 -o window_padding_width=8 -o allow_remote_control=socket-only --listen-on=unix:@desktop-nnn /usr/bin/fish -lc nnn
+
+Restart=always
+RestartSec=1
+
+#[Install]
+#WantedBy=default.target

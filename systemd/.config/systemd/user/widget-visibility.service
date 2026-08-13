@@ -1,0 +1,10 @@
+[Unit]
+Description=Hyprland Desktop Widget Visibility Controller
+Wants=desktop-nnn.service desktop-terminal.service
+After=desktop-nnn.service desktop-terminal.service
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/widget-visibility
+Restart=always
+RestartSec=1
