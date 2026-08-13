@@ -1,0 +1,11 @@
+--- /home/ganchy/.local/share/pipx/venvs/waypaper/lib/python3.14/site-packages/waypaper/app.py.bak	2026-08-12 23:28:04.773185566 -0400
++++ /home/ganchy/.local/share/pipx/venvs/waypaper/lib/python3.14/site-packages/waypaper/app.py	2026-08-13 00:32:57.657653019 -0400
+@@ -31,7 +31,7 @@
+         self.txt = txt
+         self.keys = Keys(cf)
+         self.check_backends()
+-        self.set_default_size(820, 600)
++        self.set_default_size(780, 342)
+         self.connect("delete-event", Gtk.main_quit)
+         self.selected_index = 0
+         self.caching_images_lock: threading.Lock = threading.Lock()
