@@ -1,0 +1,4 @@
+konsave
+librewolf-bin
+splix
+xivlauncher-rb

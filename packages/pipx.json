@@ -1,0 +1,119 @@
+{
+    "pipx_spec_version": "0.1",
+    "venvs": {
+        "pywal16": {
+            "metadata": {
+                "backend": "pip",
+                "injected_packages": {},
+                "main_package": {
+                    "app_paths": [
+                        {
+                            "__Path__": "/home/ganchy/.local/share/pipx/venvs/pywal16/bin/wal",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "app_paths_of_dependencies": {},
+                    "apps": [
+                        "wal"
+                    ],
+                    "apps_of_dependencies": [],
+                    "include_apps": true,
+                    "include_dependencies": false,
+                    "man_pages": [],
+                    "man_pages_of_dependencies": [],
+                    "man_paths": [],
+                    "man_paths_of_dependencies": {},
+                    "package": "pywal16",
+                    "package_or_url": "pywal16",
+                    "package_version": "3.8.15",
+                    "pinned": false,
+                    "pip_args": [],
+                    "suffix": ""
+                },
+                "pipx_metadata_version": "0.6",
+                "python_version": "Python 3.14.6",
+                "source_interpreter": {
+                    "__Path__": "/usr/bin/python3.14",
+                    "__type__": "Path"
+                },
+                "venv_args": []
+            }
+        },
+        "waypaper": {
+            "metadata": {
+                "backend": "pip",
+                "injected_packages": {},
+                "main_package": {
+                    "app_paths": [
+                        {
+                            "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/bin/waypaper",
+                            "__type__": "Path"
+                        },
+                        {
+                            "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/bin/waypaperd",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "app_paths_of_dependencies": {
+                        "imageio": [
+                            {
+                                "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/bin/imageio_download_bin",
+                                "__type__": "Path"
+                            },
+                            {
+                                "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/bin/imageio_remove_bin",
+                                "__type__": "Path"
+                            }
+                        ],
+                        "numpy": [
+                            {
+                                "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/bin/f2py",
+                                "__type__": "Path"
+                            },
+                            {
+                                "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/bin/numpy-config",
+                                "__type__": "Path"
+                            }
+                        ]
+                    },
+                    "apps": [
+                        "waypaper",
+                        "waypaperd"
+                    ],
+                    "apps_of_dependencies": [
+                        "imageio_download_bin",
+                        "imageio_remove_bin",
+                        "f2py",
+                        "numpy-config"
+                    ],
+                    "include_apps": true,
+                    "include_dependencies": false,
+                    "man_pages": [
+                        "man1/waypaper.1.gz"
+                    ],
+                    "man_pages_of_dependencies": [],
+                    "man_paths": [
+                        {
+                            "__Path__": "/home/ganchy/.local/share/pipx/venvs/waypaper/share/man/man1/waypaper.1.gz",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "man_paths_of_dependencies": {},
+                    "package": "waypaper",
+                    "package_or_url": "git+https://github.com/anufrievroman/waypaper.git",
+                    "package_version": "2.8",
+                    "pinned": false,
+                    "pip_args": [],
+                    "suffix": ""
+                },
+                "pipx_metadata_version": "0.6",
+                "python_version": "Python 3.14.6",
+                "source_interpreter": {
+                    "__Path__": "/usr/bin/python3.14",
+                    "__type__": "Path"
+                },
+                "venv_args": []
+            }
+        }
+    }
+}
