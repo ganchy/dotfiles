@@ -1,0 +1,176 @@
+#!/bin/sh
+
+WAL="$HOME/.local/bin/wal"
+
+# Use the first argument if provided.
+# Fall back to your current wallpaper.
+WALLPAPER="${1:-$HOME/Pictures/Wallpapers/kurapika.jpg}"
+
+# Stop if the file does not exist.
+if [ ! -f "$WALLPAPER" ]; then
+    echo "wal-hyprland: wallpaper not found: $WALLPAPER" >&2
+    exit 1
+fi
+
+# Generate pywal16 colors.
+"$WAL" -n -i "$WALLPAPER"
+
+# Apply pywal colors to KDE/Qt applications.
+if [ -x "$HOME/.local/bin/kde-pywal" ]; then
+    "$HOME/.local/bin/kde-pywal"
+fi
+
+# Generate Hyprlock theme from pywal colors.
+HYPR_COLORS="$HOME/.cache/wal/colors-hyprland.conf"
+
+BACKGROUND=$(sed -n 's/^\$background = //p' "$HYPR_COLORS")
+FOREGROUND=$(sed -n 's/^\$foreground = //p' "$HYPR_COLORS")
+
+COLOR1=$(sed -n 's/^\$color1 = //p' "$HYPR_COLORS")
+COLOR2=$(sed -n 's/^\$color2 = //p' "$HYPR_COLORS")
+COLOR4=$(sed -n 's/^\$color4 = //p' "$HYPR_COLORS")
+COLOR5=$(sed -n 's/^\$color5 = //p' "$HYPR_COLORS")
+
+cat > "$HOME/.config/hypr/hyprlock.conf" <<EOF
+background {
+    monitor = eDP-1
+    path = $WALLPAPER
+    color = $BACKGROUND
+    blur_passes = 5
+}
+
+input-field {
+    monitor = eDP-1
+    size = 20%, 5%
+    outline_thickness = 3
+
+    inner_color = rgba(0, 0, 0, 0.0)
+
+    outer_color = $COLOR4 $COLOR5 45deg
+    check_color = $COLOR2 $COLOR4 120deg
+    fail_color = $COLOR1 $COLOR5 40deg
+
+    font_color = $FOREGROUND
+
+    fade_on_empty = false
+    rounding = 15
+
+    position = 0, -20
+    halign = center
+    valign = center
+}
+EOF
+
+
+
+# Pull RGB values from pywal's generated Hyprland palette.
+# Borders with pywal
+#cat > "$HOME/.config/hypr/generated/wal-colors.lua" <<EOF
+#hl.config({
+#    general = {
+#        col = {
+#            active_border = {
+#                colors = {
+#                    "rgba(${COLOR4},1.0)",
+#                    "rgba(${COLOR1},1.0)"
+#                },
+#                angle = 45
+#            },
+#            inactive_border = "rgba(0,0,0,0.0)"
+#        }
+#    }
+#})
+#EOF
+
+
+COLORS="$HOME/.cache/wal/colors-hyprland.conf"
+
+COLOR1=$(awk -F'[(),]' '/^\$color1 =/ {printf "%s,%s,%s", $2,$3,$4}' "$COLORS")
+COLOR4=$(awk -F'[(),]' '/^\$color4 =/ {printf "%s,%s,%s", $2,$3,$4}' "$COLORS")
+COLOR8=$(awk -F'[(),]' '/^\$color8 =/ {printf "%s,%s,%s", $2,$3,$4}' "$COLORS")
+
+# Generate Hyprland Lua colors.
+mkdir -p "$HOME/.config/hypr/generated"
+
+cat > "$HOME/.config/hypr/generated/wal-colors.lua" <<EOF
+hl.config({
+    general = {
+        col = {
+            active_border = "rgba(0,0,0,0.0)",
+            inactive_border = "rgba(0,0,0,0.0)"
+        }
+    }
+})
+EOF
+
+# Reload Hyprland so it reads the regenerated Lua palette.
+hyprctl reload >/dev/null
+
+# Reload SwayNC colors
+if pgrep -x swaync >/dev/null 2>&1; then
+    swaync-client -rs >/dev/null 2>&1
+fi
+
+# Update colors in existing Kitty windows.
+if pgrep -x kitty >/dev/null 2>&1; then
+    kitty @ set-colors --all "$HOME/.cache/wal/colors-kitty.conf" 2>/dev/null
+fi
+
+# Refresh running Neovim instances.
+for pid in $(pgrep -x nvim); do
+    kill -USR1 "$pid"
+done
+
+# Generate KWrite/Kate theme from pywal.
+KWRITE_TEMPLATE="$HOME/.local/share/org.kde.syntax-highlighting/themes/Pywal.template.theme"
+KWRITE_THEME="$HOME/.local/share/org.kde.syntax-highlighting/themes/Pywal.theme"
+WAL_JSON="$HOME/.cache/wal/colors.json"
+
+if [ -f "$KWRITE_TEMPLATE" ] && [ -f "$WAL_JSON" ]; then
+    BG=$(jq -r '.special.background' "$WAL_JSON")
+    FG=$(jq -r '.special.foreground' "$WAL_JSON")
+
+    C1=$(jq -r '.colors.color1' "$WAL_JSON")
+    C2=$(jq -r '.colors.color2' "$WAL_JSON")
+    C3=$(jq -r '.colors.color3' "$WAL_JSON")
+    C4=$(jq -r '.colors.color4' "$WAL_JSON")
+    C5=$(jq -r '.colors.color5' "$WAL_JSON")
+    C6=$(jq -r '.colors.color6' "$WAL_JSON")
+    C8=$(jq -r '.colors.color8' "$WAL_JSON")
+
+    jq \
+        --arg bg "$BG" \
+        --arg fg "$FG" \
+        --arg c1 "$C1" \
+        --arg c2 "$C2" \
+        --arg c3 "$C3" \
+        --arg c4 "$C4" \
+        --arg c5 "$C5" \
+        --arg c6 "$C6" \
+        --arg c8 "$C8" \
+        '
+        walk(
+            if type == "string" then
+                if . == "#282a36" then $bg
+                elif . == "#f8f8f2" then $fg
+                elif . == "#44475a" then $c8
+                elif . == "#6272a4" then $c8
+                elif . == "#ff5555" then $c1
+                elif . == "#50fa7b" then $c2
+                elif . == "#ffb86c" then $c3
+                elif . == "#f1fa8c" then $c4
+                elif . == "#ff79c6" then $c5
+                elif . == "#bd93f9" then $c6
+                elif . == "#8be9fd" then $c6
+                else .
+                end
+            else .
+            end
+        )
+        |
+        .metadata.name = "Pywal"
+        ' "$KWRITE_TEMPLATE" > "$KWRITE_THEME.tmp"
+
+    chmod 644 "$KWRITE_THEME.tmp"
+    mv -f "$KWRITE_THEME.tmp" "$KWRITE_THEME"
+fi

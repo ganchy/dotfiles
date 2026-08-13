@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+set -e
+
+WAL_JSON="$HOME/.cache/wal/colors.json"
+BASE="/usr/share/color-schemes/BreezeDark.colors"
+SCHEME_DIR="$HOME/.local/share/color-schemes"
+
+SCHEME_A="$SCHEME_DIR/PywalA.colors"
+SCHEME_B="$SCHEME_DIR/PywalB.colors"
+
+if [ ! -f "$WAL_JSON" ]; then
+    echo "Could not find $WAL_JSON"
+    exit 1
+fi
+
+if [ ! -f "$BASE" ]; then
+    echo "Could not find $BASE"
+    exit 1
+fi
+
+mkdir -p "$SCHEME_DIR"
+
+# Convert #RRGGBB to R,G,B for KDE.
+hex_to_rgb() {
+    local hex="${1#\#}"
+
+    printf '%d,%d,%d' \
+        "0x${hex:0:2}" \
+        "0x${hex:2:2}" \
+        "0x${hex:4:2}"
+}
+
+# Read current pywal palette.
+BG_HEX=$(jq -r '.special.background' "$WAL_JSON")
+FG_HEX=$(jq -r '.special.foreground' "$WAL_JSON")
+ACCENT_HEX=$(jq -r '.colors.color4' "$WAL_JSON")
+
+BG=$(hex_to_rgb "$BG_HEX")
+FG=$(hex_to_rgb "$FG_HEX")
+ACCENT=$(hex_to_rgb "$ACCENT_HEX")
+
+echo "Background: $BG_HEX -> $BG"
+echo "Foreground: $FG_HEX -> $FG"
+echo "Accent:     $ACCENT_HEX -> $ACCENT"
+
+# Determine which Pywal scheme KDE is currently using.
+CURRENT_SCHEME=$(
+    kreadconfig6 \
+        --file kdeglobals \
+        --group General \
+        --key ColorScheme
+)
+
+# Always apply the opposite scheme so KDE reloads the palette.
+if [ "$CURRENT_SCHEME" = "PywalA" ]; then
+    SCHEME="$SCHEME_B"
+    SCHEME_ID="PywalB"
+    SCHEME_NAME="Pywal B"
+else
+    SCHEME="$SCHEME_A"
+    SCHEME_ID="PywalA"
+    SCHEME_NAME="Pywal A"
+fi
+
+echo "Current KDE scheme: ${CURRENT_SCHEME:-none}"
+echo "Applying: $SCHEME_ID"
+
+# Regenerate target scheme from a clean Breeze Dark base.
+cp -f "$BASE" "$SCHEME"
+chmod 644 "$SCHEME"
+
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group General \
+    --key Name "$SCHEME_NAME"
+
+# Main application colors.
+for GROUP in \
+    "Colors:Window" \
+    "Colors:View" \
+    "Colors:Button" \
+    "Colors:Tooltip" \
+    "Colors:Complementary" \
+    "Colors:Header"
+do
+    kwriteconfig6 \
+        --file "$SCHEME" \
+        --group "$GROUP" \
+        --key BackgroundNormal "$BG"
+
+    kwriteconfig6 \
+        --file "$SCHEME" \
+        --group "$GROUP" \
+        --key ForegroundNormal "$FG"
+done
+
+# Selection colors.
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group "Colors:Selection" \
+    --key BackgroundNormal "$ACCENT"
+
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group "Colors:Selection" \
+    --key ForegroundNormal "$BG"
+
+# Links and active elements.
+for GROUP in \
+    "Colors:Window" \
+    "Colors:View" \
+    "Colors:Button"
+do
+    kwriteconfig6 \
+        --file "$SCHEME" \
+        --group "$GROUP" \
+        --key ForegroundLink "$ACCENT"
+
+    kwriteconfig6 \
+        --file "$SCHEME" \
+        --group "$GROUP" \
+        --key ForegroundActive "$ACCENT"
+done
+
+# Replace all Breeze hover/focus colors.
+sed -i -E \
+    "s/^DecorationHover=.*/DecorationHover=$ACCENT/;
+     s/^DecorationFocus=.*/DecorationFocus=$ACCENT/" \
+    "$SCHEME"
+
+# Use pywal's accent instead of KDE's wallpaper accent.
+kwriteconfig6 \
+    --file kdeglobals \
+    --group General \
+    --key accentColorFromWallpaper false
+
+kwriteconfig6 \
+    --file kdeglobals \
+    --group General \
+    --key AccentColor "$ACCENT"
+
+# Apply alternating scheme.
+plasma-apply-colorscheme "$SCHEME_ID"
+
+echo "Applied KDE scheme: $SCHEME_ID"

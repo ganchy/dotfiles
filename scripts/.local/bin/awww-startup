@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Start the daemon if it is not already available.
+if ! awww query >/dev/null 2>&1; then
+    awww-daemon &
+fi
+
+# Wait briefly for the daemon/socket to become ready.
+tries=0
+
+until awww query >/dev/null 2>&1; do
+    sleep 0.02
+    tries=$((tries + 1))
+
+    if [ "$tries" -ge 100 ]; then
+        exit 1
+    fi
+done
+
+# Immediately restore the last wallpaper from awww's cache.
+awww restore
