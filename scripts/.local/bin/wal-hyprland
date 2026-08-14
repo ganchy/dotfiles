@@ -15,6 +15,11 @@ fi
 # Generate pywal16 colors.
 "$WAL" -n -i "$WALLPAPER"
 
+# Update Vesktop theme from the new pywal palette
+if [[ -x "$HOME/.local/bin/wal-vesktop" ]]; then
+    "$HOME/.local/bin/wal-vesktop"
+fi
+
 # Apply pywal colors to KDE/Qt applications.
 if [ -x "$HOME/.local/bin/kde-pywal" ]; then
     "$HOME/.local/bin/kde-pywal"
@@ -178,3 +183,5 @@ fi
 if command -q pywalfox
     pywalfox update >/dev/null 2>&1 &
 end
+
+
