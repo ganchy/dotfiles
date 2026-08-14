@@ -1,0 +1,8 @@
+[Unit]
+Description=Desktop Keybind Cheatsheet Widget
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/kitten panel --edge=none --layer=bottom --app-id=desktop-keys --focus-policy=on-demand --columns=52 --lines=14 --margin-left=14 --margin-top=445 -o background_opacity=0.75 -o window_padding_width=8 -o allow_remote_control=socket-only --listen-on=unix:@desktop-keys /usr/bin/fish -c 'printf "\e[?25l"; cat ~/.config/desktop-cheatsheet/keys.txt; while true; sleep 3600; end'
+Restart=always
+RestartSec=1

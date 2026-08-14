@@ -1,79 +1,74 @@
-#!/bin/sh
+#!/usr/bin/fish
 
-NNN_SOCKET="unix:@desktop-nnn"
-TERMINAL_SOCKET="unix:@desktop-terminal"
-RMPC_SOCKET="unix:@desktop-rmpc"
+set NNN_SOCKET "unix:@desktop-nnn"
+set TERMINAL_SOCKET "unix:@desktop-terminal"
+set RMPC_SOCKET "unix:@desktop-rmpc"
+set KEYS_SOCKET "unix:@desktop-keys"
 
-show_widgets() {
-    kitten @ --to="$NNN_SOCKET" \
-        resize-os-window --action=show >/dev/null 2>&1 || true
+function show_widgets
+    kitten @ --to="$NNN_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    kitten @ --to="$TERMINAL_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    kitten @ --to="$RMPC_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    kitten @ --to="$KEYS_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+end
 
-    kitten @ --to="$TERMINAL_SOCKET" \
-        resize-os-window --action=show >/dev/null 2>&1 || true
+function hide_widgets
+    kitten @ --to="$NNN_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    kitten @ --to="$TERMINAL_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    kitten @ --to="$RMPC_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    kitten @ --to="$KEYS_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+end
 
-    kitten @ --to="$RMPC_SOCKET" \
-        resize-os-window --action=show >/dev/null 2>&1 || true
-}
+function update_widgets
+    set ACTIVE_WS (hyprctl activeworkspace -j | jq -r '.id')
 
-hide_widgets() {
-    kitten @ --to="$NNN_SOCKET" \
-        resize-os-window --action=hide >/dev/null 2>&1 || true
-
-    kitten @ --to="$TERMINAL_SOCKET" \
-        resize-os-window --action=hide >/dev/null 2>&1 || true
-
-    kitten @ --to="$RMPC_SOCKET" \
-        resize-os-window --action=hide >/dev/null 2>&1 || true
-}
-
-update_widgets() {
-    ACTIVE_WS=$(hyprctl activeworkspace -j | jq -r '.id')
-
-    WINDOW_COUNT=$(
-        hyprctl clients -j |
-        jq --argjson ws "$ACTIVE_WS" '
-            [
-                .[]
-                | select(.workspace.id == $ws)
-
-                # Waypaper does not hide desktop widgets
-                | select(
-                    ((.class // "") | ascii_downcase)
-                    != "waypaper"
-                )
-            ]
-            | length
-        '
+    set WINDOW_COUNT (
+        hyprctl clients -j | jq --argjson ws "$ACTIVE_WS" '
+        [
+            .[]
+            | select(.workspace.id == $ws)
+            | select(((.class // "") | ascii_downcase) != "waypaper")
+        ] | length'
     )
 
-    if [ "$WINDOW_COUNT" -eq 0 ]; then
+    if test "$WINDOW_COUNT" -eq 0
         show_widgets
     else
         hide_widgets
-    fi
-}
+    end
+end
 
-# Wait briefly for all Kitty widget sockets to become available.
-for _ in $(seq 1 40); do
-    if kitten @ --to="$NNN_SOCKET" ls >/dev/null 2>&1 &&
-       kitten @ --to="$TERMINAL_SOCKET" ls >/dev/null 2>&1 &&
-       kitten @ --to="$RMPC_SOCKET" ls >/dev/null 2>&1; then
+# Wait until all widget sockets are available.
+while true
+    set ready 1
+
+    for socket in \
+        "$NNN_SOCKET" \
+        "$TERMINAL_SOCKET" \
+        "$RMPC_SOCKET" \
+        "$KEYS_SOCKET"
+
+        if not kitten @ --to="$socket" ls >/dev/null 2>&1
+            set ready 0
+            break
+        end
+    end
+
+    if test "$ready" -eq 1
         break
-    fi
+    end
 
-    sleep 0.05
-done
+    sleep 0.2
+end
 
 update_widgets
 
-SOCKET="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+set SOCKET "$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
 
-socat -U - "UNIX-CONNECT:$SOCKET" |
-while read -r event; do
-    case "$event" in
-        openwindow*|closewindow*|movewindow*|workspace*|focusedmon*)
+socat -U - "UNIX-CONNECT:$SOCKET" | while read -r event
+    switch "$event"
+        case 'openwindow*' 'closewindow*' 'movewindow*' 'workspace*' 'focusedmon*'
             sleep 0.02
             update_widgets
-            ;;
-    esac
-done
+    end
+end

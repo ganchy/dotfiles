@@ -1,0 +1,13 @@
+NNN                         RMPC
+────────────────────────    ────────────────────────
+j/k    move                 j/k    move
+h/l    parent / open        h/l    navigate
+Enter  open                 Enter  open / play
+/      filter               1/2    queue / dirs
+.      hidden files         a/A    add / add all
+Space  select               p      pause / play
+a      select all           s      stop
+p/v    copy / move          </>    prev / next
+x/X    trash / delete       ,/.    volume - / +
+!      shell                u      update library
+Tab    context              /      search
