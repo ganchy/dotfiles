@@ -174,3 +174,7 @@ if [ -f "$KWRITE_TEMPLATE" ] && [ -f "$WAL_JSON" ]; then
     chmod 644 "$KWRITE_THEME.tmp"
     mv -f "$KWRITE_THEME.tmp" "$KWRITE_THEME"
 fi
+
+if command -q pywalfox
+    pywalfox update >/dev/null 2>&1 &
+end
