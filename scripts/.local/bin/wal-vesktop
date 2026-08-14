@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+COLORS="$HOME/.cache/wal/colors.json"
+OUT="$HOME/.config/vesktop/settings/quickCss.css"
+
+[[ -f "$COLORS" ]] || exit 0
+
+BG="$(jq -r '.special.background' "$COLORS")"
+FG="$(jq -r '.special.foreground' "$COLORS")"
+
+C0="$(jq -r '.colors.color0' "$COLORS")"
+C1="$(jq -r '.colors.color1' "$COLORS")"
+C4="$(jq -r '.colors.color4' "$COLORS")"
+C5="$(jq -r '.colors.color5' "$COLORS")"
+C6="$(jq -r '.colors.color6' "$COLORS")"
+C8="$(jq -r '.colors.color8' "$COLORS")"
+
+cat > "$OUT" <<EOF
+/*
+ * Generated automatically by wal-vesktop.
+ * Do not edit manually.
+ */
+
+:root {
+    /*
+     * Derived pywal surfaces.
+     *
+     * Instead of using the nearly-black pywal background directly,
+     * mix some foreground/color8 into it to create visible layers.
+     */
+
+    --wal-bg: ${BG};
+    --wal-fg: ${FG};
+    --wal-accent: ${C4};
+
+    --wal-surface-0: color-mix(
+        in srgb,
+        ${BG} 82%,
+        ${C8} 18%
+    );
+
+    --wal-surface-1: color-mix(
+        in srgb,
+        ${BG} 72%,
+        ${C8} 28%
+    );
+
+    --wal-surface-2: color-mix(
+        in srgb,
+        ${BG} 62%,
+        ${C8} 38%
+    );
+
+    --wal-surface-3: color-mix(
+        in srgb,
+        ${BG} 55%,
+        ${C8} 45%
+    );
+
+    --wal-hover: color-mix(
+        in srgb,
+        ${C4} 22%,
+        var(--wal-surface-2)
+    );
+
+    --wal-selected: color-mix(
+        in srgb,
+        ${C4} 35%,
+        var(--wal-surface-2)
+    );
+}
+
+.theme-dark,
+.theme-light {
+
+    /* Main Discord background */
+    --background-primary: var(--wal-surface-0) !important;
+
+    /* Channel / DM sidebar */
+    --background-secondary: var(--wal-surface-1) !important;
+    --background-secondary-alt: var(--wal-surface-2) !important;
+
+    /* Server rail and darkest regions */
+    --background-tertiary: var(--wal-surface-1) !important;
+
+    /* Floating menus */
+    --background-floating: var(--wal-surface-2) !important;
+
+    /* Modern Discord variables */
+    --bg-base-primary: var(--wal-surface-0) !important;
+    --bg-base-secondary: var(--wal-surface-1) !important;
+    --bg-base-tertiary: var(--wal-surface-1) !important;
+
+    --background-base-lowest: var(--wal-surface-0) !important;
+    --background-base-lower: var(--wal-surface-0) !important;
+    --background-base-low: var(--wal-surface-1) !important;
+
+    --background-surface-low: var(--wal-surface-1) !important;
+    --background-surface-high: var(--wal-surface-2) !important;
+    --background-surface-higher: var(--wal-surface-2) !important;
+    --background-surface-highest: var(--wal-surface-3) !important;
+
+    /* Message box */
+    --channeltextarea-background: var(--wal-surface-2) !important;
+
+    /* Modals */
+    --modal-background: var(--wal-surface-1) !important;
+    --modal-footer-background: var(--wal-surface-2) !important;
+
+    /* Text */
+    --text-normal: ${FG} !important;
+
+    --text-muted: color-mix(
+        in srgb,
+        ${FG} 65%,
+        ${BG}
+    ) !important;
+
+    --header-primary: ${FG} !important;
+
+    --header-secondary: color-mix(
+        in srgb,
+        ${FG} 75%,
+        ${BG}
+    ) !important;
+
+    --channels-default: color-mix(
+        in srgb,
+        ${FG} 80%,
+        ${BG}
+    ) !important;
+
+    /* Interactive elements */
+    --interactive-normal: color-mix(
+        in srgb,
+        ${FG} 82%,
+        ${BG}
+    ) !important;
+
+    --interactive-hover: ${FG} !important;
+    --interactive-active: ${C6} !important;
+
+    --interactive-muted: color-mix(
+        in srgb,
+        ${FG} 42%,
+        ${BG}
+    ) !important;
+
+    /* Accent */
+    --brand-experiment: ${C4} !important;
+    --brand-500: ${C4} !important;
+    --brand-560: ${C5} !important;
+}
+
+/* Selected channel / DM */
+[class*="modeSelected"] [class*="link"] {
+    background: var(--wal-selected) !important;
+}
+
+/* Hovered channel / DM */
+[class*="channel"]:hover [class*="link"] {
+    background: var(--wal-hover) !important;
+}
+
+/* Friend / DM rows */
+[class*="interactive"]:hover {
+    background-color: var(--wal-hover) !important;
+}
+
+/* Mentions */
+[class*="mentioned"] {
+    background-color: color-mix(
+        in srgb,
+        ${C4} 20%,
+        var(--wal-surface-0)
+    ) !important;
+}
+
+/* Search fields and inputs */
+input,
+[class*="searchBar"],
+[class*="searchBox"] {
+    background-color: var(--wal-surface-2) !important;
+}
+
+/* Cards such as Active Now */
+[class*="itemCard"] {
+    background-color: var(--wal-surface-1) !important;
+}
+
+[class*="itemCard"]:hover {
+    background-color: var(--wal-surface-2) !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+        in srgb,
+        ${C4} 60%,
+        var(--wal-surface-3)
+    ) !important;
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--wal-surface-0) !important;
+}
+
+/* =========================================================
+ * CHAT COMPOSER
+ * ========================================================= */
+
+.theme-dark,
+.theme-light {
+    --chat-background-default: var(--wal-surface-2) !important;
+    --chat-input-container-background: var(--wal-surface-2) !important;
+    --channeltextarea-background: var(--wal-surface-2) !important;
+    --input-background: var(--wal-surface-2) !important;
+}
+
+
+/* Force the visible composer surface */
+[class*="channelTextArea"],
+[class*="channelTextArea"] [class*="scrollableContainer"],
+[class*="channelTextArea"] [class*="themedBackground"] {
+    background-color: var(--wal-surface-2) !important;
+    background: var(--wal-surface-2) !important;
+}
+
+
+/* Slight accent while typing */
+[class*="channelTextArea"]:focus-within [class*="scrollableContainer"],
+[class*="channelTextArea"]:focus-within [class*="themedBackground"] {
+    background-color: var(--wal-surface-3) !important;
+    background: var(--wal-surface-3) !important;
+}
+
+EOF
