@@ -146,6 +146,17 @@ for key, val in pairs(env_vars) do
 ---- LOOK AND FEEL ----
 -----------------------
 
+-- Wofi flash and location fix--
+
+hl.window_rule({
+    name = "wofi-launcher",
+    match = {
+        class = "wofi"
+    },
+    float = true,
+    move = { "(monitor_w-window_w)/2", 54 },
+})
+
 -- Specific window transparency --
 
 hl.window_rule({
