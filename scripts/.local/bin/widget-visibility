@@ -70,7 +70,7 @@ update_widgets
 
 set SOCKET "$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
 
-socat -U - "UNIX-CONNECT:$SOCKET" | while read -r event
+socat -U - "UNIX-CONNECT:$SOCKET" | while read event
     switch "$event"
         case 'openwindow*' 'closewindow*' 'movewindow*' 'workspace*' 'focusedmon*'
             sleep 0.02
