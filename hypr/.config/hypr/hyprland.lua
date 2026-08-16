@@ -270,7 +270,7 @@ hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "
 -- })
 
 ---------------------
--- Floating Waypaper
+-- Waypaper behavior and position
 ---------------------
 hl.window_rule({
     name = "waypaper-menu",
@@ -279,10 +279,11 @@ hl.window_rule({
     },
 
     float = true,
+    opacity = "0.97 override 0.97 override",
 
     move = {
-        561,
-        46
+        "(monitor_w-window_w)/2",
+               46
     },
 })
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
