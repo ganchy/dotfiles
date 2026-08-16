@@ -7,14 +7,23 @@
 
 window {
     margin: 0px;
-    border: 2px solid @color5;
+    border: 0px;
     border-radius: 12px;
+    box-shadow: inset 0 0 0 2px @color5;
     background-color: @background;
     color: @foreground;
 }
 
 #input {
-margin: 12px;
+/*
+ * Original:
+ *   8px outer padding + 12px input margin
+ *
+ * Add the outer spacing to the outside-facing edges,
+ * but leave the bottom at 12px so the gap below the
+ * input doesn't grow.
+ */
+margin: 20px 20px 12px 20px;
 padding: 10px;
 border-radius: 8px;
 background-color: @color0;
@@ -22,12 +31,16 @@ color: @foreground;
 }
 
 #inner-box {
-margin: 8px;
+/*
+ * Preserve the original 8px top gap, while absorbing
+ * the old outer padding on left/right/bottom.
+ */
+margin: 8px 16px 16px 16px;
 background-color: @background;
 }
 
 #outer-box {
-padding: 8px;
+padding: 0px;
 background-color: @background;
 }
 
@@ -53,5 +66,3 @@ color: @background;
 #text {
 color: @foreground;
 }
-
-

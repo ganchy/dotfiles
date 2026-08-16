@@ -154,7 +154,8 @@ hl.window_rule({
         class = "wofi"
     },
     float = true,
-    move = { "(monitor_w-window_w)/2", 54 },
+    opacity = "0.97 override 0.97 override",
+    move = { "(monitor_w-window_w)/2", 46 },
 })
 
 -- Specific window transparency --
@@ -371,6 +372,7 @@ hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("exec firefox"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("exec teams-for-linux"))
+hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("exec librewolf --private-window"))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("waypaper"))
