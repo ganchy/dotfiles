@@ -13,10 +13,10 @@ if [ ! -f "$WALLPAPER" ]; then
 fi
 
 # Generate pywal16 colors.
-"$WAL" -n -i "$WALLPAPER"
+"$WAL" --cols16 -n -i "$WALLPAPER"
 
 # Update Vesktop theme from the new pywal palette
-if [[ -x "$HOME/.local/bin/wal-vesktop" ]]; then
+if [ -x "$HOME/.local/bin/wal-vesktop" ]; then
     "$HOME/.local/bin/wal-vesktop"
 fi
 
@@ -180,8 +180,7 @@ if [ -f "$KWRITE_TEMPLATE" ] && [ -f "$WAL_JSON" ]; then
     mv -f "$KWRITE_THEME.tmp" "$KWRITE_THEME"
 fi
 
-if command -q pywalfox
+if command -v pywalfox >/dev/null 2>&1; then
     pywalfox update >/dev/null 2>&1 &
-end
-
+fi
 
