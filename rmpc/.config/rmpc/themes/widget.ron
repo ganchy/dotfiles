@@ -13,16 +13,16 @@
     modal_background_color: None,
     modal_backdrop: false,
 
-    preview_label_style: (fg: "yellow"),
-    preview_metadata_group_style: (fg: "yellow", modifiers: "Bold"),
+    preview_label_style: (fg: "light_yellow"),
+    preview_metadata_group_style: (fg: "light_yellow", modifiers: "Bold"),
 
     highlighted_item_style: (
-        fg: "blue",
+        fg: "light_blue",
         modifiers: "Bold",
     ),
 
     current_item_style: (
-        fg: "blue",
+        fg: "light_blue",
         modifiers: "Bold",
     ),
 
@@ -31,7 +31,7 @@
     ),
 
     highlight_border_style: (
-        fg: "blue",
+        fg: "light_blue",
     ),
 
     symbols: (
@@ -48,17 +48,17 @@
 
     level_styles: (
         info: (
-            fg: "blue",
+            fg: "light_blue",
             bg: "black",
         ),
 
         warn: (
-            fg: "yellow",
+            fg: "light_yellow",
             bg: "black",
         ),
 
         error: (
-            fg: "red",
+            fg: "light_red",
             bg: "black",
         ),
 
@@ -68,7 +68,7 @@
         ),
 
         trace: (
-            fg: "magenta",
+            fg: "light_magenta",
             bg: "black",
         ),
     ),
@@ -81,7 +81,7 @@
         ),
 
         elapsed_style: (
-            fg: "blue",
+            fg: "light_blue",
         ),
 
         thumb_style: (
@@ -96,7 +96,7 @@
     tab_bar: (
         active_style: (
             fg: "black",
-            bg: "blue",
+            bg: "light_blue",
             modifiers: "Bold",
         ),
 
@@ -194,7 +194,7 @@ song_table_format: [
                     (
                         kind: Text("["),
                         style: (
-                            fg: "yellow",
+                            fg: "light_yellow",
                             modifiers: "Bold",
                         ),
                     ),
@@ -207,7 +207,7 @@ song_table_format: [
                         ),
 
                         style: (
-                            fg: "yellow",
+                            fg: "light_yellow",
                             modifiers: "Bold",
                         ),
                     ),
@@ -215,7 +215,7 @@ song_table_format: [
                     (
                         kind: Text("]"),
                         style: (
-                            fg: "yellow",
+                            fg: "light_yellow",
                             modifiers: "Bold",
                         ),
                     ),
@@ -294,7 +294,7 @@ song_table_format: [
                                     ),
 
                                     style: (
-                                        fg: "blue",
+                                        fg: "light_blue",
                                     ),
                                 ),
                             ],
@@ -313,7 +313,7 @@ song_table_format: [
                                 (
                                     kind: Text("%"),
                                     style: (
-                                        fg: "blue",
+                                        fg: "light_blue",
                                     ),
                                 ),
                             ],
@@ -374,7 +374,7 @@ song_table_format: [
                         ),
 
                         style: (
-                            fg: "yellow",
+                            fg: "light_yellow",
                             modifiers: "Bold",
                         ),
 
@@ -382,7 +382,7 @@ song_table_format: [
                             kind: Text("Unknown"),
 
                             style: (
-                                fg: "yellow",
+                                fg: "light_yellow",
                                 modifiers: "Bold",
                             ),
                         ),
@@ -431,7 +431,7 @@ song_table_format: [
                                     ),
 
                                     style: (
-                                        fg: "blue",
+                                        fg: "light_blue",
                                     ),
 
                                     align: Left,
@@ -450,7 +450,7 @@ song_table_format: [
                                 (
                                     kind: Text("["),
                                     style: (
-                                        fg: "blue",
+                                        fg: "light_blue",
                                         modifiers: "Bold",
                                     ),
                                 ),
@@ -463,12 +463,12 @@ song_table_format: [
                                                 off_label: "z",
 
                                                 on_style: (
-                                                    fg: "yellow",
+                                                    fg: "light_yellow",
                                                     modifiers: "Bold",
                                                 ),
 
                                                 off_style: (
-                                                    fg: "blue",
+                                                    fg: "light_blue",
                                                     modifiers: "Dim",
                                                 ),
                                             ),
@@ -484,12 +484,12 @@ song_table_format: [
                                                 off_label: "x",
 
                                                 on_style: (
-                                                    fg: "yellow",
+                                                    fg: "light_yellow",
                                                     modifiers: "Bold",
                                                 ),
 
                                                 off_style: (
-                                                    fg: "blue",
+                                                    fg: "light_blue",
                                                     modifiers: "Dim",
                                                 ),
                                             ),
@@ -506,17 +506,17 @@ song_table_format: [
                                                 oneshot_label: "c",
 
                                                 on_style: (
-                                                    fg: "yellow",
+                                                    fg: "light_yellow",
                                                     modifiers: "Bold",
                                                 ),
 
                                                 off_style: (
-                                                    fg: "blue",
+                                                    fg: "light_blue",
                                                     modifiers: "Dim",
                                                 ),
 
                                                 oneshot_style: (
-                                                    fg: "red",
+                                                    fg: "light_red",
                                                     modifiers: "Dim",
                                                 ),
                                             ),
@@ -533,17 +533,17 @@ song_table_format: [
                                                 oneshot_label: "v",
 
                                                 on_style: (
-                                                    fg: "yellow",
+                                                    fg: "light_yellow",
                                                     modifiers: "Bold",
                                                 ),
 
                                                 off_style: (
-                                                    fg: "blue",
+                                                    fg: "light_blue",
                                                     modifiers: "Dim",
                                                 ),
 
                                                 oneshot_style: (
-                                                    fg: "red",
+                                                    fg: "light_red",
                                                     modifiers: "Bold",
                                                 ),
                                             ),
@@ -554,7 +554,7 @@ song_table_format: [
                                 (
                                     kind: Text("]"),
                                     style: (
-                                        fg: "blue",
+                                        fg: "light_blue",
                                         modifiers: "Bold",
                                     ),
                                 ),
@@ -590,7 +590,7 @@ song_table_format: [
 
                                             style: (
                                                 fg: "black",
-                                                bg: "blue",
+                                                bg: "light_blue",
                                             ),
                                         ),
                                     ),
@@ -603,7 +603,7 @@ song_table_format: [
 
                                             style: (
                                                 fg: "black",
-                                                bg: "green",
+                                                bg: "light_green",
                                             ),
                                         ),
                                     ),

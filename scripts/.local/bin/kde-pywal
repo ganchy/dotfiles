@@ -30,7 +30,6 @@ hex_to_rgb() {
         "0x${hex:4:2}"
 }
 
-# Blend color B into color A by percentage.
 mix_rgb() {
     local a="${1#\#}"
     local b="${2#\#}"
@@ -52,47 +51,91 @@ mix_rgb() {
 }
 
 #
-# Read pywal16 palette.
+# Pywal special colors.
 #
 BG_HEX=$(jq -r '.special.background' "$WAL_JSON")
 FG_HEX=$(jq -r '.special.foreground' "$WAL_JSON")
 
-RED_HEX=$(jq -r '.colors.color1' "$WAL_JSON")
-GREEN_HEX=$(jq -r '.colors.color2' "$WAL_JSON")
-YELLOW_HEX=$(jq -r '.colors.color3' "$WAL_JSON")
-ACCENT_HEX=$(jq -r '.colors.color4' "$WAL_JSON")
-MAGENTA_HEX=$(jq -r '.colors.color5' "$WAL_JSON")
+#
+# Full pywal16 palette.
+#
+C0_HEX=$(jq -r '.colors.color0' "$WAL_JSON")
+C1_HEX=$(jq -r '.colors.color1' "$WAL_JSON")
+C2_HEX=$(jq -r '.colors.color2' "$WAL_JSON")
+C3_HEX=$(jq -r '.colors.color3' "$WAL_JSON")
+C4_HEX=$(jq -r '.colors.color4' "$WAL_JSON")
+C5_HEX=$(jq -r '.colors.color5' "$WAL_JSON")
+C6_HEX=$(jq -r '.colors.color6' "$WAL_JSON")
+C7_HEX=$(jq -r '.colors.color7' "$WAL_JSON")
 
-# Bright cyan/blue counterpart from the second pywal16 color bank.
-# Used specifically for selections so they do not visually merge
-# with normal syntax/comment colors.
-SELECTION_HEX=$(jq -r '.colors.color11' "$WAL_JSON")
+C8_HEX=$(jq -r '.colors.color8' "$WAL_JSON")
+C9_HEX=$(jq -r '.colors.color9' "$WAL_JSON")
+C10_HEX=$(jq -r '.colors.color10' "$WAL_JSON")
+C11_HEX=$(jq -r '.colors.color11' "$WAL_JSON")
+C12_HEX=$(jq -r '.colors.color12' "$WAL_JSON")
+C13_HEX=$(jq -r '.colors.color13' "$WAL_JSON")
+C14_HEX=$(jq -r '.colors.color14' "$WAL_JSON")
+C15_HEX=$(jq -r '.colors.color15' "$WAL_JSON")
 
 BG=$(hex_to_rgb "$BG_HEX")
 FG=$(hex_to_rgb "$FG_HEX")
 
-RED=$(hex_to_rgb "$RED_HEX")
-GREEN=$(hex_to_rgb "$GREEN_HEX")
-YELLOW=$(hex_to_rgb "$YELLOW_HEX")
-ACCENT=$(hex_to_rgb "$ACCENT_HEX")
-MAGENTA=$(hex_to_rgb "$MAGENTA_HEX")
-SELECTION=$(hex_to_rgb "$SELECTION_HEX")
+C0=$(hex_to_rgb "$C0_HEX")
+C1=$(hex_to_rgb "$C1_HEX")
+C2=$(hex_to_rgb "$C2_HEX")
+C3=$(hex_to_rgb "$C3_HEX")
+C4=$(hex_to_rgb "$C4_HEX")
+C5=$(hex_to_rgb "$C5_HEX")
+C6=$(hex_to_rgb "$C6_HEX")
+C7=$(hex_to_rgb "$C7_HEX")
+
+C8=$(hex_to_rgb "$C8_HEX")
+C9=$(hex_to_rgb "$C9_HEX")
+C10=$(hex_to_rgb "$C10_HEX")
+C11=$(hex_to_rgb "$C11_HEX")
+C12=$(hex_to_rgb "$C12_HEX")
+C13=$(hex_to_rgb "$C13_HEX")
+C14=$(hex_to_rgb "$C14_HEX")
+C15=$(hex_to_rgb "$C15_HEX")
 
 #
-# Subtle pywal-derived alternate background instead of Breeze gray.
+# Semantic KDE colors.
+#
+# Dark bank:
+#   color1-7  = subdued/base variants
+#
+# Bright bank:
+#   color9    = negative/error
+#   color10   = positive
+#   color11   = neutral/warning
+#   color12   = primary accent
+#   color13   = visited/secondary accent
+#   color14   = alternate highlight
+#   color15   = bright foreground
+#
+ACCENT="$C12"
+VISITED="$C13"
+NEGATIVE="$C9"
+POSITIVE="$C10"
+NEUTRAL="$C11"
+SELECTION="$C12"
+
+#
+# Subtle UI-derived colors.
 #
 ALT=$(mix_rgb "$BG_HEX" "$FG_HEX" 8)
-
-#
-# Dimmed text, also derived from pywal rather than Breeze.
-#
 MUTED=$(mix_rgb "$BG_HEX" "$FG_HEX" 55)
 
-echo "Background: $BG_HEX -> $BG"
-echo "Alternate:             $ALT"
-echo "Foreground: $FG_HEX -> $FG"
-echo "Accent:     $ACCENT_HEX -> $ACCENT"
-echo "Selection:  $SELECTION_HEX -> $SELECTION"
+echo "Pywal16 KDE palette"
+echo "-------------------"
+echo "Background: $BG_HEX"
+echo "Foreground: $FG_HEX"
+echo "Accent:     $C12_HEX (color12)"
+echo "Visited:    $C13_HEX (color13)"
+echo "Negative:   $C9_HEX  (color9)"
+echo "Positive:   $C10_HEX (color10)"
+echo "Neutral:    $C11_HEX (color11)"
+echo "Selection:  $C12_HEX (color12)"
 
 CURRENT_SCHEME=$(
     kreadconfig6 \
@@ -102,7 +145,7 @@ CURRENT_SCHEME=$(
 )
 
 #
-# Alternate A/B every run to force KDE applications to reload.
+# Alternate A/B every run so KDE applications reload the scheme.
 #
 if [ "$CURRENT_SCHEME" = "PywalA" ]; then
     SCHEME="$SCHEME_B"
@@ -126,10 +169,7 @@ kwriteconfig6 \
     --key Name "$SCHEME_NAME"
 
 #
-# Replace Breeze colors throughout the scheme.
-#
-# BackgroundAlternate is replaced as well so item views do not retain
-# Breeze's default gray.
+# Replace Breeze colors.
 #
 sed -i -E \
     "s/^BackgroundNormal=.*/BackgroundNormal=$BG/;
@@ -138,20 +178,16 @@ sed -i -E \
      s/^ForegroundInactive=.*/ForegroundInactive=$MUTED/;
      s/^ForegroundActive=.*/ForegroundActive=$ACCENT/;
      s/^ForegroundLink=.*/ForegroundLink=$ACCENT/;
-     s/^ForegroundVisited=.*/ForegroundVisited=$MAGENTA/;
-     s/^ForegroundNegative=.*/ForegroundNegative=$RED/;
-     s/^ForegroundNeutral=.*/ForegroundNeutral=$YELLOW/;
-     s/^ForegroundPositive=.*/ForegroundPositive=$GREEN/;
+     s/^ForegroundVisited=.*/ForegroundVisited=$VISITED/;
+     s/^ForegroundNegative=.*/ForegroundNegative=$NEGATIVE/;
+     s/^ForegroundNeutral=.*/ForegroundNeutral=$NEUTRAL/;
+     s/^ForegroundPositive=.*/ForegroundPositive=$POSITIVE/;
      s/^DecorationHover=.*/DecorationHover=$ACCENT/;
      s/^DecorationFocus=.*/DecorationFocus=$ACCENT/" \
     "$SCHEME"
 
 #
-# Selection colors.
-#
-# Use pywal16 color11 instead of the normal KDE accent. This gives
-# selections their own palette role and keeps them visually distinct
-# from syntax highlighting such as comments.
+# KDE/Qt selection colors.
 #
 for KEY in BackgroundNormal BackgroundAlternate
 do
@@ -161,10 +197,6 @@ do
         --key "$KEY" "$SELECTION"
 done
 
-#
-# Dark text against the brighter color11 selection background gives
-# selected text strong contrast.
-#
 for KEY in ForegroundNormal ForegroundInactive ForegroundActive
 do
     kwriteconfig6 \
@@ -197,7 +229,7 @@ kwriteconfig6 \
     --key inactiveForeground "$MUTED"
 
 #
-# Force KDE to use pywal's accent instead of deriving one itself.
+# Force KDE to use the pywal16 accent.
 #
 kwriteconfig6 \
     --file kdeglobals \
@@ -210,7 +242,7 @@ kwriteconfig6 \
     --key AccentColor "$ACCENT"
 
 #
-# Update KWrite/KTextEditor syntax theme from the same pywal16 palette.
+# Generate the KWrite/KTextEditor Pywal16 syntax theme.
 #
 if [ -x "$HOME/.local/bin/kwrite-pywal16" ]; then
     "$HOME/.local/bin/kwrite-pywal16"

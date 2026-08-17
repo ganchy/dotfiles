@@ -1,6 +1,9 @@
 source /usr/share/cachyos-fish-config/cachyos-config.fish
 
-set -gx NNN_COLORS '4561'
+# nnn contexts use pywal16's bright ANSI bank:
+# color12, color13, color14, color9
+# Falls back to 4,5,6,1 on an 8-color terminal.
+set -gx NNN_COLORS '#0c0d0e09;4561'
 set -gx NNN_FCOLORS '050605020706060801010203'
 
 if test -f ~/.cache/wal/colors.fish

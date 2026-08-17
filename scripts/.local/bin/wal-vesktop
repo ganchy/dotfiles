@@ -7,34 +7,106 @@ OUT="$HOME/.config/vesktop/settings/quickCss.css"
 
 [[ -f "$COLORS" ]] || exit 0
 
+#
+# Pywal special colors.
+#
 BG="$(jq -r '.special.background' "$COLORS")"
 FG="$(jq -r '.special.foreground' "$COLORS")"
 
+#
+# Full pywal16 palette.
+#
 C0="$(jq -r '.colors.color0' "$COLORS")"
 C1="$(jq -r '.colors.color1' "$COLORS")"
+C2="$(jq -r '.colors.color2' "$COLORS")"
+C3="$(jq -r '.colors.color3' "$COLORS")"
 C4="$(jq -r '.colors.color4' "$COLORS")"
 C5="$(jq -r '.colors.color5' "$COLORS")"
 C6="$(jq -r '.colors.color6' "$COLORS")"
+C7="$(jq -r '.colors.color7' "$COLORS")"
+
 C8="$(jq -r '.colors.color8' "$COLORS")"
+C9="$(jq -r '.colors.color9' "$COLORS")"
+C10="$(jq -r '.colors.color10' "$COLORS")"
+C11="$(jq -r '.colors.color11' "$COLORS")"
+C12="$(jq -r '.colors.color12' "$COLORS")"
+C13="$(jq -r '.colors.color13' "$COLORS")"
+C14="$(jq -r '.colors.color14' "$COLORS")"
+C15="$(jq -r '.colors.color15' "$COLORS")"
 
 cat > "$OUT" <<EOF
 /*
  * Generated automatically by wal-vesktop.
  * Do not edit manually.
+ *
+ * Pywal16 semantic mapping:
+ *
+ * color0   base dark
+ * color1   subdued red
+ * color2   subdued green
+ * color3   subdued yellow
+ * color4   subdued blue/accent
+ * color5   subdued magenta
+ * color6   subdued cyan
+ * color7   subdued foreground
+ *
+ * color8   muted / secondary
+ * color9   danger / error
+ * color10  success / positive
+ * color11  warning / attention
+ * color12  primary accent
+ * color13  secondary accent
+ * color14  info / links
+ * color15  bright foreground
  */
 
 :root {
     /*
-     * Derived pywal surfaces.
-     *
-     * Instead of using the nearly-black pywal background directly,
-     * mix some foreground/color8 into it to create visible layers.
+     * Raw pywal16 palette.
      */
-
     --wal-bg: ${BG};
     --wal-fg: ${FG};
-    --wal-accent: ${C4};
 
+    --wal-c0: ${C0};
+    --wal-c1: ${C1};
+    --wal-c2: ${C2};
+    --wal-c3: ${C3};
+    --wal-c4: ${C4};
+    --wal-c5: ${C5};
+    --wal-c6: ${C6};
+    --wal-c7: ${C7};
+
+    --wal-c8: ${C8};
+    --wal-c9: ${C9};
+    --wal-c10: ${C10};
+    --wal-c11: ${C11};
+    --wal-c12: ${C12};
+    --wal-c13: ${C13};
+    --wal-c14: ${C14};
+    --wal-c15: ${C15};
+
+    /*
+     * Semantic colors.
+     */
+    --wal-accent: ${C12};
+    --wal-accent-dark: ${C4};
+    --wal-accent-secondary: ${C13};
+
+    --wal-danger: ${C9};
+    --wal-success: ${C10};
+    --wal-warning: ${C11};
+    --wal-info: ${C14};
+
+    --wal-muted: ${C8};
+    --wal-bright: ${C15};
+
+    /*
+     * Derived pywal surfaces.
+     *
+     * The main wallpaper background is usually too dark to use
+     * everywhere directly, so color8 is mixed into it to create
+     * visible Discord UI layers.
+     */
     --wal-surface-0: color-mix(
         in srgb,
         ${BG} 82%,
@@ -59,15 +131,19 @@ cat > "$OUT" <<EOF
         ${C8} 45%
     );
 
+    /*
+     * Hover uses the darker accent.
+     * Selected uses the brighter matching color12.
+     */
     --wal-hover: color-mix(
         in srgb,
-        ${C4} 22%,
+        ${C4} 24%,
         var(--wal-surface-2)
     );
 
     --wal-selected: color-mix(
         in srgb,
-        ${C4} 35%,
+        ${C12} 38%,
         var(--wal-surface-2)
     );
 }
@@ -75,20 +151,21 @@ cat > "$OUT" <<EOF
 .theme-dark,
 .theme-light {
 
-    /* Main Discord background */
+    /*
+     * Main surfaces.
+     */
     --background-primary: var(--wal-surface-0) !important;
 
-    /* Channel / DM sidebar */
     --background-secondary: var(--wal-surface-1) !important;
     --background-secondary-alt: var(--wal-surface-2) !important;
 
-    /* Server rail and darkest regions */
     --background-tertiary: var(--wal-surface-1) !important;
 
-    /* Floating menus */
     --background-floating: var(--wal-surface-2) !important;
 
-    /* Modern Discord variables */
+    /*
+     * Modern Discord surface variables.
+     */
     --bg-base-primary: var(--wal-surface-0) !important;
     --bg-base-secondary: var(--wal-surface-1) !important;
     --bg-base-tertiary: var(--wal-surface-1) !important;
@@ -102,90 +179,133 @@ cat > "$OUT" <<EOF
     --background-surface-higher: var(--wal-surface-2) !important;
     --background-surface-highest: var(--wal-surface-3) !important;
 
-    /* Message box */
+    /*
+     * Composer.
+     */
     --channeltextarea-background: var(--wal-surface-2) !important;
+    --chat-background-default: var(--wal-surface-2) !important;
+    --chat-input-container-background: var(--wal-surface-2) !important;
+    --input-background: var(--wal-surface-2) !important;
 
-    /* Modals */
+    /*
+     * Modals.
+     */
     --modal-background: var(--wal-surface-1) !important;
     --modal-footer-background: var(--wal-surface-2) !important;
 
-    /* Text */
+    /*
+     * Main text.
+     */
     --text-normal: ${FG} !important;
+    --header-primary: ${C15} !important;
 
     --text-muted: color-mix(
         in srgb,
-        ${FG} 65%,
-        ${BG}
+        ${C8} 72%,
+        ${FG}
     ) !important;
-
-    --header-primary: ${FG} !important;
 
     --header-secondary: color-mix(
         in srgb,
-        ${FG} 75%,
-        ${BG}
+        ${FG} 78%,
+        ${C8}
     ) !important;
 
     --channels-default: color-mix(
         in srgb,
-        ${FG} 80%,
-        ${BG}
+        ${FG} 82%,
+        ${C8}
     ) !important;
 
-    /* Interactive elements */
+    /*
+     * Links / information.
+     */
+    --text-link: ${C14} !important;
+    --text-link-low-saturation: ${C6} !important;
+
+    /*
+     * Interactive elements.
+     */
     --interactive-normal: color-mix(
         in srgb,
         ${FG} 82%,
-        ${BG}
+        ${C8}
     ) !important;
 
-    --interactive-hover: ${FG} !important;
-    --interactive-active: ${C6} !important;
+    --interactive-hover: ${C15} !important;
+    --interactive-active: ${C14} !important;
 
     --interactive-muted: color-mix(
         in srgb,
-        ${FG} 42%,
+        ${C8} 70%,
         ${BG}
     ) !important;
 
-    /* Accent */
-    --brand-experiment: ${C4} !important;
-    --brand-500: ${C4} !important;
-    --brand-560: ${C5} !important;
+    /*
+     * Brand/accent.
+     *
+     * color4 is the subdued counterpart.
+     * color12 is the bright active counterpart.
+     */
+    --brand-experiment: ${C12} !important;
+    --brand-500: ${C12} !important;
+    --brand-560: ${C4} !important;
+
+    /*
+     * Semantic status colors.
+     */
+    --status-danger: ${C9} !important;
+    --status-positive: ${C10} !important;
+    --status-warning: ${C11} !important;
 }
 
-/* Selected channel / DM */
+/*
+ * Selected channel / DM.
+ */
 [class*="modeSelected"] [class*="link"] {
     background: var(--wal-selected) !important;
 }
 
-/* Hovered channel / DM */
+/*
+ * Hovered channel / DM.
+ */
 [class*="channel"]:hover [class*="link"] {
     background: var(--wal-hover) !important;
 }
 
-/* Friend / DM rows */
+/*
+ * Friend / DM rows.
+ */
 [class*="interactive"]:hover {
     background-color: var(--wal-hover) !important;
 }
 
-/* Mentions */
+/*
+ * Mentions.
+ *
+ * Use the bright secondary accent rather than the same blue used
+ * for selected channels, so mentions remain visually distinct.
+ */
 [class*="mentioned"] {
     background-color: color-mix(
         in srgb,
-        ${C4} 20%,
+        ${C13} 22%,
         var(--wal-surface-0)
     ) !important;
 }
 
-/* Search fields and inputs */
+/*
+ * Search fields and inputs.
+ */
 input,
 [class*="searchBar"],
 [class*="searchBox"] {
     background-color: var(--wal-surface-2) !important;
 }
 
-/* Cards such as Active Now */
+/*
+ * Cards such as Active Now.
+ */
 [class*="itemCard"] {
     background-color: var(--wal-surface-1) !important;
 }
@@ -194,11 +314,13 @@ input,
     background-color: var(--wal-surface-2) !important;
 }
 
-/* Scrollbars */
+/*
+ * Scrollbars.
+ */
 ::-webkit-scrollbar-thumb {
     background-color: color-mix(
         in srgb,
-        ${C4} 60%,
+        ${C12} 55%,
         var(--wal-surface-3)
     ) !important;
 }
@@ -207,20 +329,15 @@ input,
     background-color: var(--wal-surface-0) !important;
 }
 
-/* =========================================================
+/*
+ * =========================================================
  * CHAT COMPOSER
- * ========================================================= */
+ * =========================================================
+ */
 
-.theme-dark,
-.theme-light {
-    --chat-background-default: var(--wal-surface-2) !important;
-    --chat-input-container-background: var(--wal-surface-2) !important;
-    --channeltextarea-background: var(--wal-surface-2) !important;
-    --input-background: var(--wal-surface-2) !important;
-}
-
-
-/* Force the visible composer surface */
+/*
+ * Force the visible composer surface.
+ */
 [class*="channelTextArea"],
 [class*="channelTextArea"] [class*="scrollableContainer"],
 [class*="channelTextArea"] [class*="themedBackground"] {
@@ -228,12 +345,28 @@ input,
     background: var(--wal-surface-2) !important;
 }
 
-
-/* Slight accent while typing */
+/*
+ * Slightly brighter surface while typing.
+ */
 [class*="channelTextArea"]:focus-within [class*="scrollableContainer"],
 [class*="channelTextArea"]:focus-within [class*="themedBackground"] {
     background-color: var(--wal-surface-3) !important;
     background: var(--wal-surface-3) !important;
 }
 
+/*
+ * Links receive the bright cyan/info slot.
+ */
+a {
+    --text-link: ${C14} !important;
+}
+
 EOF
+
+echo "Updated Vesktop pywal16 theme"
+echo "  Accent:    ${C12} (color12)"
+echo "  Secondary: ${C13} (color13)"
+echo "  Info:      ${C14} (color14)"
+echo "  Danger:    ${C9}  (color9)"
+echo "  Success:   ${C10} (color10)"
+echo "  Warning:   ${C11} (color11)"
