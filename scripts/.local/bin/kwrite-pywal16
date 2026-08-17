@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+WAL="$HOME/.cache/wal/colors.json"
+THEME_DIR="$HOME/.local/share/org.kde.syntax-highlighting/themes"
+THEME="$THEME_DIR/Pywal16.theme"
+TEMPLATE="$THEME_DIR/Pywal.template.theme"
+
+if [ ! -f "$WAL" ]; then
+    echo "kwrite-pywal16: missing $WAL" >&2
+    exit 1
+fi
+
+if [ ! -f "$TEMPLATE" ]; then
+    echo "kwrite-pywal16: missing $TEMPLATE" >&2
+    exit 1
+fi
+
+mkdir -p "$THEME_DIR"
+
+BG=$(jq -r '.special.background' "$WAL")
+FG=$(jq -r '.special.foreground' "$WAL")
+
+C1=$(jq -r '.colors.color1' "$WAL")
+C2=$(jq -r '.colors.color2' "$WAL")
+C3=$(jq -r '.colors.color3' "$WAL")
+C4=$(jq -r '.colors.color4' "$WAL")
+C5=$(jq -r '.colors.color5' "$WAL")
+C6=$(jq -r '.colors.color6' "$WAL")
+C7=$(jq -r '.colors.color7' "$WAL")
+C8=$(jq -r '.colors.color8' "$WAL")
+C9=$(jq -r '.colors.color9' "$WAL")
+C10=$(jq -r '.colors.color10' "$WAL")
+C11=$(jq -r '.colors.color11' "$WAL")
+C12=$(jq -r '.colors.color12' "$WAL")
+C13=$(jq -r '.colors.color13' "$WAL")
+C14=$(jq -r '.colors.color14' "$WAL")
+C15=$(jq -r '.colors.color15' "$WAL")
+
+# Keep selection visually separate from comments.
+SELECTION="$C13"
+
+TMP=$(mktemp)
+
+jq \
+    --arg bg "$BG" \
+    --arg fg "$FG" \
+    --arg c1 "$C1" \
+    --arg c2 "$C2" \
+    --arg c3 "$C3" \
+    --arg c4 "$C4" \
+    --arg c5 "$C5" \
+    --arg c6 "$C6" \
+    --arg c7 "$C7" \
+    --arg c8 "$C8" \
+    --arg c9 "$C9" \
+    --arg c10 "$C10" \
+    --arg c11 "$C11" \
+    --arg c12 "$C12" \
+    --arg c13 "$C13" \
+    --arg c14 "$C14" \
+    --arg c15 "$C15" \
+    --arg selection "$SELECTION" \
+'
+    .metadata.name = "Pywal16"
+    |
+    .metadata.revision = ((.metadata.revision // 0) + 1)
+
+    # Editor colors
+    |
+    .["editor-colors"]["BackgroundColor"] = $bg
+    |
+    .["editor-colors"]["CurrentLine"] = $c8
+    |
+    .["editor-colors"]["CurrentLineNumber"] = $c15
+    |
+    .["editor-colors"]["IconBorder"] = $bg
+    |
+    .["editor-colors"]["LineNumbers"] = $c8
+    |
+    .["editor-colors"]["IndentationLine"] = $c8
+    |
+    .["editor-colors"]["TabMarker"] = $c8
+    |
+    .["editor-colors"]["WordWrapMarker"] = $c8
+    |
+    .["editor-colors"]["Separator"] = $c8
+    |
+    .["editor-colors"]["BracketMatching"] = $c12
+    |
+    .["editor-colors"]["CodeFolding"] = $c10
+    |
+    .["editor-colors"]["SearchHighlight"] = $c3
+    |
+    .["editor-colors"]["TextSelection"] = $selection
+
+    # Normal text
+    |
+    .["text-styles"]["Normal"]["text-color"] = $fg
+
+    # Comments
+    |
+    .["text-styles"]["Comment"]["text-color"] = $c8
+    |
+    .["text-styles"]["CommentVar"]["text-color"] = $c8
+    |
+    .["text-styles"]["Documentation"]["text-color"] = $c8
+
+    # Keywords / language structure
+    |
+    .["text-styles"]["Keyword"]["text-color"] = $c12
+    |
+    .["text-styles"]["ControlFlow"]["text-color"] = $c12
+    |
+    .["text-styles"]["DataType"]["text-color"] = $c11
+    |
+    .["text-styles"]["BuiltIn"]["text-color"] = $c11
+    |
+    .["text-styles"]["Function"]["text-color"] = $c13
+    |
+    .["text-styles"]["Variable"]["text-color"] = $c14
+    |
+    .["text-styles"]["Operator"]["text-color"] = $c6
+    |
+    .["text-styles"]["Attribute"]["text-color"] = $c14
+    |
+    .["text-styles"]["Annotation"]["text-color"] = $c6
+
+    # Strings / characters
+    |
+    .["text-styles"]["String"]["text-color"] = $c10
+    |
+    .["text-styles"]["VerbatimString"]["text-color"] = $c10
+    |
+    .["text-styles"]["SpecialString"]["text-color"] = $c9
+    |
+    .["text-styles"]["Char"]["text-color"] = $c10
+    |
+    .["text-styles"]["SpecialChar"]["text-color"] = $c9
+
+    # Numbers / constants
+    |
+    .["text-styles"]["BaseN"]["text-color"] = $c9
+    |
+    .["text-styles"]["DecVal"]["text-color"] = $c9
+    |
+    .["text-styles"]["Float"]["text-color"] = $c9
+    |
+    .["text-styles"]["Constant"]["text-color"] = $c14
+
+    # Imports / preprocessors
+    |
+    .["text-styles"]["Import"]["text-color"] = $c2
+    |
+    .["text-styles"]["Preprocessor"]["text-color"] = $c2
+    |
+    .["text-styles"]["Others"]["text-color"] = $c7
+
+    # Errors / warnings
+    |
+    .["text-styles"]["Error"]["text-color"] = $c9
+    |
+    .["text-styles"]["Warning"]["text-color"] = $c3
+    |
+    .["text-styles"]["Alert"]["text-color"] = $c9
+
+    # Force high-contrast text for every selected syntax style.
+    |
+    walk(
+        if type == "object" and has("selected-text-color")
+        then .["selected-text-color"] = $bg
+        else .
+        end
+    )
+' "$TEMPLATE" > "$TMP"
+
+mv "$TMP" "$THEME"
+
+echo "Updated KWrite theme: Pywal16"
+echo "Background: $BG"
+echo "Foreground: $FG"
+echo "Comments:   $C8"
+echo "Selection:  $SELECTION"

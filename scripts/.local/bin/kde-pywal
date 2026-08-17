@@ -51,7 +51,9 @@ mix_rgb() {
     printf '%d,%d,%d' "$r" "$g" "$bl"
 }
 
-# Read pywal palette.
+#
+# Read pywal16 palette.
+#
 BG_HEX=$(jq -r '.special.background' "$WAL_JSON")
 FG_HEX=$(jq -r '.special.foreground' "$WAL_JSON")
 
@@ -61,6 +63,11 @@ YELLOW_HEX=$(jq -r '.colors.color3' "$WAL_JSON")
 ACCENT_HEX=$(jq -r '.colors.color4' "$WAL_JSON")
 MAGENTA_HEX=$(jq -r '.colors.color5' "$WAL_JSON")
 
+# Bright cyan/blue counterpart from the second pywal16 color bank.
+# Used specifically for selections so they do not visually merge
+# with normal syntax/comment colors.
+SELECTION_HEX=$(jq -r '.colors.color11' "$WAL_JSON")
+
 BG=$(hex_to_rgb "$BG_HEX")
 FG=$(hex_to_rgb "$FG_HEX")
 
@@ -69,17 +76,23 @@ GREEN=$(hex_to_rgb "$GREEN_HEX")
 YELLOW=$(hex_to_rgb "$YELLOW_HEX")
 ACCENT=$(hex_to_rgb "$ACCENT_HEX")
 MAGENTA=$(hex_to_rgb "$MAGENTA_HEX")
+SELECTION=$(hex_to_rgb "$SELECTION_HEX")
 
+#
 # Subtle pywal-derived alternate background instead of Breeze gray.
+#
 ALT=$(mix_rgb "$BG_HEX" "$FG_HEX" 8)
 
+#
 # Dimmed text, also derived from pywal rather than Breeze.
+#
 MUTED=$(mix_rgb "$BG_HEX" "$FG_HEX" 55)
 
 echo "Background: $BG_HEX -> $BG"
 echo "Alternate:             $ALT"
 echo "Foreground: $FG_HEX -> $FG"
 echo "Accent:     $ACCENT_HEX -> $ACCENT"
+echo "Selection:  $SELECTION_HEX -> $SELECTION"
 
 CURRENT_SCHEME=$(
     kreadconfig6 \
@@ -88,7 +101,9 @@ CURRENT_SCHEME=$(
         --key ColorScheme
 )
 
+#
 # Alternate A/B every run to force KDE applications to reload.
+#
 if [ "$CURRENT_SCHEME" = "PywalA" ]; then
     SCHEME="$SCHEME_B"
     SCHEME_ID="PywalB"
@@ -113,8 +128,8 @@ kwriteconfig6 \
 #
 # Replace Breeze colors throughout the scheme.
 #
-# This intentionally includes BackgroundAlternate, which is used by
-# item views and was previously retaining Breeze's gray.
+# BackgroundAlternate is replaced as well so item views do not retain
+# Breeze's default gray.
 #
 sed -i -E \
     "s/^BackgroundNormal=.*/BackgroundNormal=$BG/;
@@ -132,36 +147,54 @@ sed -i -E \
     "$SCHEME"
 
 #
-# Selection is intentionally different from normal/alternate rows.
+# Selection colors.
+#
+# Use pywal16 color11 instead of the normal KDE accent. This gives
+# selections their own palette role and keeps them visually distinct
+# from syntax highlighting such as comments.
 #
 for KEY in BackgroundNormal BackgroundAlternate
 do
     kwriteconfig6 \
         --file "$SCHEME" \
         --group "Colors:Selection" \
-        --key "$KEY" "$ACCENT"
+        --key "$KEY" "$SELECTION"
 done
 
-for KEY in ForegroundNormal ForegroundInactive
+#
+# Dark text against the brighter color11 selection background gives
+# selected text strong contrast.
+#
+for KEY in ForegroundNormal ForegroundInactive ForegroundActive
 do
     kwriteconfig6 \
         --file "$SCHEME" \
         --group "Colors:Selection" \
-        --key "$KEY" "$FG"
+        --key "$KEY" "$BG"
 done
-
-kwriteconfig6 \
-    --file "$SCHEME" \
-    --group "Colors:Selection" \
-    --key ForegroundActive "$FG"
 
 #
 # Window-manager/titlebar colors.
 #
-kwriteconfig6 --file "$SCHEME" --group WM --key activeBackground "$BG"
-kwriteconfig6 --file "$SCHEME" --group WM --key activeForeground "$FG"
-kwriteconfig6 --file "$SCHEME" --group WM --key inactiveBackground "$ALT"
-kwriteconfig6 --file "$SCHEME" --group WM --key inactiveForeground "$MUTED"
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group WM \
+    --key activeBackground "$BG"
+
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group WM \
+    --key activeForeground "$FG"
+
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group WM \
+    --key inactiveBackground "$ALT"
+
+kwriteconfig6 \
+    --file "$SCHEME" \
+    --group WM \
+    --key inactiveForeground "$MUTED"
 
 #
 # Force KDE to use pywal's accent instead of deriving one itself.
@@ -176,9 +209,13 @@ kwriteconfig6 \
     --group General \
     --key AccentColor "$ACCENT"
 
+#
+# Update KWrite/KTextEditor syntax theme from the same pywal16 palette.
+#
+if [ -x "$HOME/.local/bin/kwrite-pywal16" ]; then
+    "$HOME/.local/bin/kwrite-pywal16"
+fi
+
 plasma-apply-colorscheme "$SCHEME_ID"
 
 echo "Applied KDE scheme: $SCHEME_ID"
-EOF
-
-chmod +x ~/dotfiles/scripts/.local/bin/kde-pywal
