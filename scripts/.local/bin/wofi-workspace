@@ -1,0 +1,95 @@
+#!/usr/bin/env fish
+
+# Remember the workspace where Wofi was opened.
+set -l workspace (hyprctl activeworkspace -j | jq -r '.id')
+
+if test -z "$workspace" -o "$workspace" = "null"
+    exit 1
+end
+
+# Wofi normally needs to run synchronously so we can capture the selected
+# command. Run it in the background into a temporary file instead, which
+# gives us time to transfer focus after the window maps.
+set -l output_file (mktemp)
+
+wofi \
+    --show drun \
+    --define=drun-print_command=true \
+    > "$output_file" &
+
+set -l wofi_pid $last_pid
+
+# Wait for Wofi to appear, then reproduce the same focus handoff that
+# works for wallpaper-menu:
+#   1. move the pointer into Wofi
+#   2. explicitly focus Wofi
+for attempt in (seq 1 50)
+    set -l window (
+        hyprctl clients -j |
+        jq -r '
+            .[]
+            | select((.class // "" | ascii_downcase) == "wofi")
+            | [
+                .address,
+                .at[0],
+                .at[1],
+                .size[0],
+                .size[1]
+              ]
+            | @tsv
+        ' |
+        tail -n1
+    )
+
+    if test -n "$window"
+        set -l parts (string split \t -- "$window")
+
+        set -l address $parts[1]
+        set -l x $parts[2]
+        set -l y $parts[3]
+        set -l width $parts[4]
+        set -l height $parts[5]
+
+        set -l center_x (math "$x + $width / 2")
+        set -l center_y (math "$y + $height / 2")
+
+        # Move the cursor into Wofi. This releases keyboard focus from
+        # an interactive Kitty desktop widget.
+        hyprctl dispatch \
+            "hl.dsp.cursor.move({ x = $center_x, y = $center_y })" \
+            >/dev/null
+
+        sleep 0.03
+
+        # Reinforce focus on the exact Wofi window.
+        hyprctl dispatch \
+            "hl.dsp.focus({ window = \"address:$address\" })" \
+            >/dev/null
+
+        break
+    end
+
+    sleep 0.01
+end
+
+# Wait until Wofi closes and preserve its exit status.
+wait $wofi_pid
+set -l wofi_status $status
+
+# Retrieve the command selected through drun-print_command.
+set -l command (string collect < "$output_file")
+rm -f "$output_file"
+
+# Esc/cancel or an empty selection: do nothing.
+if test $wofi_status -ne 0 -o -z "$command"
+    exit 0
+end
+
+# Quote both strings safely for the Hyprland Lua dispatcher.
+set -l lua_command (printf '%s' "$command" | jq -Rs .)
+set -l lua_workspace (printf '%s silent' "$workspace" | jq -Rs .)
+
+# Launch the selected application on the workspace where Wofi was opened.
+hyprctl dispatch \
+    "hl.dsp.exec_cmd($lua_command, { workspace = $lua_workspace })" \
+    >/dev/null

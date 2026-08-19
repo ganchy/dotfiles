@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+kitty \
+    --class wallpaper-picker \
+    --title Waypaper \
+    -o background_opacity=0.90 \
+    -o window_padding_width=4 \
+    -o 'modify_font=cell_width +1px' \
+    "$HOME/.local/bin/wallpaper-picker" &
+
+PICKER_PID=$!
+
+# Wait for the picker to appear in Hyprland.
+for _ in {1..50}; do
+    WINDOW="$(
+        hyprctl clients -j |
+        jq -r '
+            .[]
+            | select((.class // "" | ascii_downcase) == "wallpaper-picker")
+            | [
+                .address,
+                .at[0],
+                .at[1],
+                .size[0],
+                .size[1]
+              ]
+            | @tsv
+        ' |
+        tail -n1
+    )"
+
+    if [[ -n "$WINDOW" ]]; then
+        IFS=$'\t' read -r ADDRESS X Y WIDTH HEIGHT <<< "$WINDOW"
+
+        CENTER_X=$((X + WIDTH / 2))
+        CENTER_Y=$((Y + HEIGHT / 2))
+
+        # Current Hyprland Lua dispatcher syntax.
+        hyprctl dispatch \
+            "hl.dsp.cursor.move({ x = $CENTER_X, y = $CENTER_Y })"
+
+        sleep 0.03
+
+        # Explicitly focus the newly mapped picker.
+        hyprctl dispatch \
+            "hl.dsp.focus({ window = \"address:$ADDRESS\" })"
+
+        break
+    fi
+
+    sleep 0.01
+done
+
+wait "$PICKER_PID"

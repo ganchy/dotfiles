@@ -172,7 +172,7 @@ song_table_format: [
         panes: [
             (
                 size: "2",
-                pane: Pane(Header),
+                pane: Component("header"),
             ),
 
             (
@@ -248,79 +248,29 @@ song_table_format: [
             ),
         ),
 
-        "volume": Split(
-            direction: Horizontal,
-
-            panes: [
-                (
-                    size: "1",
-
-                    pane: Pane(
-                        Property(
-                            content: [
-                                (
-                                    kind: Text(""),
+        "volume": Pane(
+            Property(
+                content: [
+                    (
+                        kind: Transform(
+                            Truncate(
+                                content: (
+                                    kind: Property(
+                                        Widget(Volume),
+                                    ),
+                                    style: (
+                                        fg: "light_blue",
+                                    ),
                                 ),
-                            ],
-                        ),
-                    ),
-                ),
-
-                (
-                    size: "100%",
-
-                    pane: Pane(
-                        Volume(
-                            kind: Slider(
-                                symbols: (
-                                    filled: "─",
-                                    thumb: "●",
-                                    track: "─",
-                                ),
+                                length: 12,
+                                from_start: true,
                             ),
                         ),
                     ),
-                ),
+                ],
 
-                (
-                    size: "3",
-
-                    pane: Pane(
-                        Property(
-                            content: [
-                                (
-                                    kind: Property(
-                                        Status(Volume),
-                                    ),
-
-                                    style: (
-                                        fg: "light_blue",
-                                    ),
-                                ),
-                            ],
-
-                            align: Right,
-                        ),
-                    ),
-                ),
-
-                (
-                    size: "2",
-
-                    pane: Pane(
-                        Property(
-                            content: [
-                                (
-                                    kind: Text("%"),
-                                    style: (
-                                        fg: "light_blue",
-                                    ),
-                                ),
-                            ],
-                        ),
-                    ),
-                ),
-            ],
+                align: Right,
+            ),
         ),
 
         "elapsed_and_bitrate": Pane(
@@ -340,24 +290,6 @@ song_table_format: [
                         kind: Property(
                             Status(Duration),
                         ),
-                    ),
-
-                    (
-                        kind: Group([
-                            (
-                                kind: Text(" ("),
-                            ),
-
-                            (
-                                kind: Property(
-                                    Status(Bitrate),
-                                ),
-                            ),
-
-                            (
-                                kind: Text(" kbps)"),
-                            ),
-                        ]),
                     ),
                 ],
 
@@ -408,163 +340,59 @@ song_table_format: [
             ),
         ),
 
-        "states": Split(
-            direction: Horizontal,
+        "states": Pane(
+            Property(
+                content: [
+                    (
+                        kind: Property(
+                            Status(
+                                RepeatV2(
+                                    on_label: "Repeat",
+                                    off_label: "Repeat",
 
-            panes: [
-                (
-                    size: "1",
-                    pane: Pane(Empty()),
-                ),
-
-                (
-                    size: "100%",
-
-                    pane: Pane(
-                        Property(
-                            content: [
-                                (
-                                    kind: Property(
-                                        Status(
-                                            InputBuffer(),
-                                        ),
-                                    ),
-
-                                    style: (
-                                        fg: "light_blue",
-                                    ),
-
-                                    align: Left,
-                                ),
-                            ],
-                        ),
-                    ),
-                ),
-
-                (
-                    size: "6",
-
-                    pane: Pane(
-                        Property(
-                            content: [
-                                (
-                                    kind: Text("["),
-                                    style: (
-                                        fg: "light_blue",
+                                    on_style: (
+                                        fg: "white",
                                         modifiers: "Bold",
                                     ),
-                                ),
 
-                                (
-                                    kind: Property(
-                                        Status(
-                                            RepeatV2(
-                                                on_label: "z",
-                                                off_label: "z",
-
-                                                on_style: (
-                                                    fg: "light_yellow",
-                                                    modifiers: "Bold",
-                                                ),
-
-                                                off_style: (
-                                                    fg: "light_blue",
-                                                    modifiers: "Dim",
-                                                ),
-                                            ),
-                                        ),
+                                    off_style: (
+                                        fg: "dark_gray",
                                     ),
                                 ),
-
-                                (
-                                    kind: Property(
-                                        Status(
-                                            RandomV2(
-                                                on_label: "x",
-                                                off_label: "x",
-
-                                                on_style: (
-                                                    fg: "light_yellow",
-                                                    modifiers: "Bold",
-                                                ),
-
-                                                off_style: (
-                                                    fg: "light_blue",
-                                                    modifiers: "Dim",
-                                                ),
-                                            ),
-                                        ),
-                                    ),
-                                ),
-
-                                (
-                                    kind: Property(
-                                        Status(
-                                            ConsumeV2(
-                                                on_label: "c",
-                                                off_label: "c",
-                                                oneshot_label: "c",
-
-                                                on_style: (
-                                                    fg: "light_yellow",
-                                                    modifiers: "Bold",
-                                                ),
-
-                                                off_style: (
-                                                    fg: "light_blue",
-                                                    modifiers: "Dim",
-                                                ),
-
-                                                oneshot_style: (
-                                                    fg: "light_red",
-                                                    modifiers: "Dim",
-                                                ),
-                                            ),
-                                        ),
-                                    ),
-                                ),
-
-                                (
-                                    kind: Property(
-                                        Status(
-                                            SingleV2(
-                                                on_label: "v",
-                                                off_label: "v",
-                                                oneshot_label: "v",
-
-                                                on_style: (
-                                                    fg: "light_yellow",
-                                                    modifiers: "Bold",
-                                                ),
-
-                                                off_style: (
-                                                    fg: "light_blue",
-                                                    modifiers: "Dim",
-                                                ),
-
-                                                oneshot_style: (
-                                                    fg: "light_red",
-                                                    modifiers: "Bold",
-                                                ),
-                                            ),
-                                        ),
-                                    ),
-                                ),
-
-                                (
-                                    kind: Text("]"),
-                                    style: (
-                                        fg: "light_blue",
-                                        modifiers: "Bold",
-                                    ),
-                                ),
-                            ],
-
-                            align: Right,
+                            ),
                         ),
                     ),
-                ),
-            ],
+
+                    (
+                        kind: Text(" / "),
+                        style: (
+                            fg: "white",
+                        ),
+                    ),
+
+                    (
+                        kind: Property(
+                            Status(
+                                RandomV2(
+                                    on_label: "Random",
+                                    off_label: "Random",
+
+                                    on_style: (
+                                        fg: "white",
+                                        modifiers: "Bold",
+                                    ),
+
+                                    off_style: (
+                                        fg: "dark_gray",
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ],
+
+                align: Right,
+            ),
         ),
 
         "input_mode": Pane(
@@ -661,6 +489,27 @@ song_table_format: [
                 (
                     size: "1",
                     pane: Component("states"),
+                ),
+            ],
+        ),
+
+        "header": Split(
+            direction: Horizontal,
+
+            panes: [
+                (
+                    size: "30%",
+                    pane: Component("header_left"),
+                ),
+
+                (
+                    size: "40%",
+                    pane: Component("header_center"),
+                ),
+
+                (
+                    size: "30%",
+                    pane: Component("header_right"),
                 ),
             ],
         ),

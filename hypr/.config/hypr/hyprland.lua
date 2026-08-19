@@ -286,6 +286,33 @@ hl.window_rule({
                46
     },
 })
+
+---------------------
+-- Wallpaper Picker
+---------------------
+hl.window_rule({
+    name = "wallpaper-picker",
+    match = {
+        class = "wallpaper-picker",
+    },
+
+    float = true,
+    stay_focused = true,
+    focus_on_activate = true,
+
+    opacity = "0.97 override 0.97 override",
+
+    size = {
+        700,
+        300,
+    },
+
+    move = {
+        "monitor_w * 0.5 - 350",
+        46,
+    },
+})
+
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
 hl.config({
     dwindle = {
@@ -316,6 +343,7 @@ hl.config({
         force_default_wallpaper = 0,    -- Set to 0 or 1 to disable the anime mascot wallpapers
         disable_hyprland_logo   = true, -- If true disables the random hyprland logo / anime girl background. :(
         disable_splash_rendering = true,
+        layers_hog_keyboard_focus = false,
     },
 })
 
@@ -376,7 +404,7 @@ hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("exec teams-for-linux"))
 hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("exec librewolf --private-window"))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("waypaper"))
+hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("~/.local/bin/wallpaper-menu"))
 
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
@@ -413,7 +441,27 @@ hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+-- Disable wofi and wallpaper-menu from being dragged
+hl.bind("SUPER + mouse:272", function()
+local w = hl.get_active_window()
+
+if w == nil then
+    return
+    end
+
+    local class = (w.class or ""):lower()
+
+    if class == "wallpaper-picker"
+        or class == "wofi"
+        then
+        return
+        end
+
+        hl.dispatch(hl.dsp.window.drag())
+        end, {
+            mouse = true,
+            drag = true,
+        })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Laptop multimedia keys for volume and LCD brightness

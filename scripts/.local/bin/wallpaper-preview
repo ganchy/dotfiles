@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+FILE="$1"
+COLS="$2"
+LINES="$3"
+
+[[ -z "$FILE" || -z "$COLS" || -z "$LINES" ]] && exit 1
+
+# Source image dimensions.
+read -r IMG_W IMG_H < <(
+    magick identify -format '%w %h' "${FILE}[0]"
+)
+
+# Kitty window dimensions in pixels.
+IFS=x read -r WIN_W WIN_H < <(
+    kitten icat --print-window-size
+)
+
+# Actual terminal grid.
+read -r TERM_ROWS TERM_COLS < <(
+    stty size < /dev/tty
+)
+
+# Work out how many terminal rows the image actually occupies
+# when Kitty scales it into the fzf preview area.
+read -r IMAGE_ROWS TOP_ROWS < <(
+    awk \
+        -v iw="$IMG_W" \
+        -v ih="$IMG_H" \
+        -v ww="$WIN_W" \
+        -v wh="$WIN_H" \
+        -v tc="$TERM_COLS" \
+        -v tr="$TERM_ROWS" \
+        -v pc="$COLS" \
+        -v pl="$LINES" '
+    BEGIN {
+        cell_w = ww / tc
+        cell_h = wh / tr
+
+        box_w = pc * cell_w
+        box_h = pl * cell_h
+
+        scale_w = box_w / iw
+        scale_h = box_h / ih
+
+        scale = scale_w
+        if (scale_h < scale)
+            scale = scale_h
+
+        # icat does not enlarge small images unless --scale-up is used.
+        if (scale > 1)
+            scale = 1
+
+        rendered_h = ih * scale
+
+        rows = int((rendered_h / cell_h) + 0.999999)
+        if (rows > pl)
+            rows = pl
+        if (rows < 1)
+            rows = 1
+
+        top = int((pl - rows) / 2)
+
+        print rows, top
+    }'
+)
+
+# fzf positions unicode-placeholder graphics according to the text cells
+# emitted by the preview command, so actually emit the vertical padding.
+if (( TOP_ROWS > 0 )); then
+    for ((i = 0; i < TOP_ROWS; i++)); do
+        printf '\n'
+    done
+fi
+
+# Give icat the remaining area. Keep horizontal alignment exactly as before.
+REMAINING=$(( LINES - TOP_ROWS ))
+
+kitten icat \
+    --clear \
+    --transfer-mode=memory \
+    --unicode-placeholder \
+    --stdin=no \
+    --align=center \
+    --place="${COLS}x${REMAINING}@0x0" \
+    "$FILE" |
+sed '$d'

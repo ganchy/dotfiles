@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+ROOT="$HOME/Pictures/Wallpapers"
+
+# Load the current pywal palette.
+WAL_COLORS="$HOME/.cache/wal/colors.sh"
+
+if [[ -r "$WAL_COLORS" ]]; then
+    source "$WAL_COLORS"
+
+    FZF_WAL_COLORS=(
+    --color="fg:${foreground},bg:${background},hl:${color4}"
+    --color="fg+:${foreground},bg+:${color0},hl+:${color6}"
+    --color="border:${color8},label:${color7}"
+    --color="prompt:${color6},pointer:${color5},marker:${color5}"
+    --color="info:${color3},spinner:${color6}"
+    --color="gutter:${background}"
+)
+else
+    FZF_WAL_COLORS=()
+fi
+
+CHOICE="$(
+    find "$ROOT" -type f \
+        \( -iname '*.jpg' \
+        -o -iname '*.jpeg' \
+        -o -iname '*.png' \
+        -o -iname '*.webp' \
+        -o -iname '*.gif' \) \
+        -print0 |
+    while IFS= read -r -d '' FILE; do
+        REL="${FILE#"$ROOT"/}"
+        printf '%s\t%s\n' "$REL" "$FILE"
+    done |
+    SHELL=/bin/bash fzf \
+        --delimiter=$'\t' \
+        --with-nth=1 \
+        --nth=1 \
+        --reverse \
+        --border=sharp \
+        --input-border=sharp \
+        --input-label='wallpaper search' \
+        --list-border=sharp \
+        --list-label=' wallpapers ' \
+        --preview-window='right,50%,border-sharp' \
+--preview-label=' image preview ' \
+--prompt='› ' \
+--pointer='◆' \
+--marker='✓' \
+"${FZF_WAL_COLORS[@]}" \
+--preview='
+    "$HOME/.local/bin/wallpaper-preview" \
+        {2} \
+        "$FZF_PREVIEW_COLUMNS" \
+        "$FZF_PREVIEW_LINES"
+'
+)"
+
+[[ -z "$CHOICE" ]] && exit 0
+
+WALLPAPER="${CHOICE#*$'\t'}"
+
+# Let Waypaper handle/store the wallpaper, but don't run its
+# post-command because we invoke our wal pipeline explicitly below.
+waypaper \
+    --wallpaper "$WALLPAPER" \
+    --no-post-command
+
+# Run the same pywal pipeline our old Waypaper setup used.
+"$HOME/.local/bin/wal-hyprland" "$WALLPAPER"

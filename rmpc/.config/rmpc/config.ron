@@ -19,21 +19,14 @@
     wrap_navigation: false,
     scroll_amount: 1,
     select_current_song_on_change: true,
-
-    album_art: (
-        method: Auto,
-        max_size_px: (
-            width: 1200,
-            height: 1200,
-        ),
-        disabled_protocols: [
-            "http://",
-            "https://",
-        ],
-        vertical_align: Center,
-        horizontal_align: Center,
+    keybinds: (
+        global: {
+            "c": ExternalCommand(
+                command: ["/usr/bin/rmpc", "consume", "off"],
+                description: "Keep consume off",
+            ),
+        },
     ),
-
     search: (
         case_sensitive: false,
         ignore_diacritics: false,
@@ -83,74 +76,55 @@
             name: "Queue",
 
             pane: Split(
-                direction: Horizontal,
+                direction: Vertical,
 
                 panes: [
                     (
-                        size: "35%",
+                        size: "3",
 
                         borders: "ALL",
-                        border_symbols: Rounded,
 
-                        pane: Pane(AlbumArt),
-                    ),
-
-                    (
-                        size: "65%",
+                        border_symbols: Inherited(
+                            parent: Plain,
+                            bottom_left: "├",
+                            bottom_right: "┤",
+                        ),
 
                         pane: Split(
-                            direction: Vertical,
+                            direction: Horizontal,
 
                             panes: [
                                 (
-                                    size: "3",
-
-                                    borders: "ALL",
-
-                                    border_symbols: Inherited(
-                                        parent: Rounded,
-                                        bottom_left: "├",
-                                        bottom_right: "┤",
-                                    ),
-
-                                    pane: Split(
-                                        direction: Horizontal,
-
-                                        panes: [
-                                            (
-                                                size: "1",
-                                                pane: Pane(Empty()),
-                                            ),
-
-                                            (
-                                                size: "100%",
-                                                pane: Pane(QueueHeader()),
-                                            ),
-                                        ],
-                                    ),
+                                    size: "1",
+                                    pane: Pane(Empty()),
                                 ),
 
                                 (
                                     size: "100%",
+                                    pane: Pane(QueueHeader()),
+                                ),
+                            ],
+                        ),
+                    ),
 
-                                    borders: "LEFT | RIGHT | BOTTOM",
-                                    border_symbols: Rounded,
+                    (
+                        size: "100%",
 
-                                    pane: Split(
-                                        direction: Horizontal,
+                        borders: "LEFT | RIGHT | BOTTOM",
+                        border_symbols: Plain,
 
-                                        panes: [
-                                            (
-                                                size: "1",
-                                                pane: Pane(Empty()),
-                                            ),
+                        pane: Split(
+                            direction: Horizontal,
 
-                                            (
-                                                size: "100%",
-                                                pane: Pane(Queue),
-                                            ),
-                                        ],
-                                    ),
+                            panes: [
+                                (
+                                    size: "1",
+                                    pane: Pane(Empty()),
+                                ),
+
+                                (
+                                    size: "100%",
+                                    pane: Pane(Queue),
                                 ),
                             ],
                         ),
