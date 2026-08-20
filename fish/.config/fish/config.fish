@@ -10,6 +10,16 @@ if test -f ~/.cache/wal/colors.fish
     source ~/.cache/wal/colors.fish
 end
 
+# Reload pywal syntax colors in already-running Fish shells.
+function __reload_pywal_colors --on-signal WINCH
+    if test -f ~/.cache/wal/colors.fish
+        source ~/.cache/wal/colors.fish
+    end
+
+    # Redraw any command currently being typed.
+    commandline -f repaint 2>/dev/null
+end
+
 function nnn
     command nnn $argv
 

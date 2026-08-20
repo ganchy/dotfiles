@@ -17,6 +17,9 @@ fi
 #
 "$WAL" --cols16 lighten -n -i "$WALLPAPER"
 
+# Tell already-running Fish shells to reload pywal syntax colors.
+pkill -WINCH -x fish 2>/dev/null || true
+
 #
 # Update Vesktop from the new pywal16 palette.
 #
