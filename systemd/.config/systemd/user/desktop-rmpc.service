@@ -5,6 +5,7 @@ After=mpd.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/kitten panel --edge=none --layer=bottom --app-id=desktop-rmpc --focus-policy=on-demand --columns=60 --lines=12 --margin-left=14 --margin-top=804 -o background_opacity=0.75 -o window_padding_width=8 -o allow_remote_control=socket-only --listen-on=unix:@desktop-rmpc /usr/bin/rmpc
+ExecStartPre=/usr/bin/rmpc consume off
+ExecStart=/usr/bin/kitten panel --edge=none --layer=bottom --app-id=desktop-rmpc --focus-policy=on-demand --columns=80 --lines=13 --margin-left=14 --margin-top=784 -o background_opacity=0.75 -o window_padding_width=8 -o allow_remote_control=socket-only --listen-on=unix:@desktop-rmpc /usr/bin/rmpc
 Restart=always
 RestartSec=1
