@@ -1,0 +1,58 @@
+#!/usr/bin/env fish
+
+set widgets \
+    desktop-nnn \
+    desktop-rmpc \
+    desktop-terminal
+
+# Give this reset invocation a unique token.
+set token_file "$XDG_RUNTIME_DIR/widget-focus-reset.token"
+set token "$fish_pid-"(date +%s%N)
+printf '%s\n' "$token" > "$token_file"
+
+# Workspace changed: immediately disarm every interactive widget.
+for w in $widgets
+    kitten @ --to=unix:@$w resize-os-window \
+        --action=os-panel \
+        --incremental \
+        focus-policy=not-allowed >/dev/null 2>&1
+end
+
+# Allow the workspace/cursor change itself to settle.
+sleep 0.05
+
+# Record the cursor position AFTER the workspace switch.
+set start_pos (hyprctl cursorpos 2>/dev/null | string trim)
+
+while true
+    sleep 0.03
+
+    # A newer workspace change happened.
+    # Let that newer invocation control the widgets instead.
+    if not test -f "$token_file"
+        exit 0
+    end
+
+    if test (cat "$token_file") != "$token"
+        exit 0
+    end
+
+    set current_pos (hyprctl cursorpos 2>/dev/null | string trim)
+
+    if test "$current_pos" != "$start_pos"
+        break
+    end
+end
+
+# Make sure another workspace switch did not occur while we were waiting.
+if test (cat "$token_file") != "$token"
+    exit 0
+end
+
+# Actual mouse movement occurred: restore normal hover focus.
+for w in $widgets
+    kitten @ --to=unix:@$w resize-os-window \
+        --action=os-panel \
+        --incremental \
+        focus-policy=on-demand >/dev/null 2>&1
+end

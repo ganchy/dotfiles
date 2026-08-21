@@ -55,6 +55,12 @@ if f then
     dofile(wal_colors)
 end
 
+-- Focus control for fresh workspace
+-- Avoids widgets stealing keyboard focus
+hl.on("workspace.active", function(ws)
+hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/widget-focus-reset")
+end)
+
 -------------------
 ---- AUTOSTART ----
 -------------------
