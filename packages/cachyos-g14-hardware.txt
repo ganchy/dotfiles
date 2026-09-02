@@ -1,0 +1,28 @@
+=== PRODUCT NAME ===
+ROG Zephyrus G14 GA401IV_GA401IV
+
+=== PRODUCT VERSION ===
+1.0       
+
+=== GRAPHICS ===
+04:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir [Radeon Vega Series / Radeon Vega Mobile Series] [1002:1636] (rev c5)
+	Subsystem: ASUSTeK Computer Inc. Device [1043:1f11]
+	Kernel driver in use: amdgpu
+	Kernel modules: amdgpu
+04:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir/Cezanne HDMI/DP Audio Controller [1002:1637]
+
+=== GPU MODULES ===
+i2c_nvidia_gpu         16384  0
+amdgpu              18792448  47
+drm_panel_backlight_quirks    12288  1 amdgpu
+drm_buddy              12288  1 amdgpu
+drm_suballoc_helper    24576  1 amdgpu
+i2c_algo_bit           20480  1 amdgpu
+drm_exec               12288  1 amdgpu
+gpu_sched              77824  1 amdgpu
+amdxcp                 12288  1 amdgpu
+drm_ttm_helper         20480  2 amdgpu
+ttm                   159744  2 amdgpu,drm_ttm_helper
+drm_display_helper    307200  1 amdgpu
+cec                   106496  2 drm_display_helper,amdgpu
+video                  81920  3 asus_wmi,amdgpu,asus_nb_wmi
