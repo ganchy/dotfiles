@@ -1,2 +1,5 @@
 hypr/.config/hypr/generated/wal-colors.lua
 kwrite/.local/share/org.kde.syntax-highlighting/themes/Pywal.theme
+
+# Runtime systemd enablement symlinks
+systemd/.config/systemd/user/default.target.wants/
