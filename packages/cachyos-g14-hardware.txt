@@ -26,3 +26,9 @@ ttm                   159744  2 amdgpu,drm_ttm_helper
 drm_display_helper    307200  1 amdgpu
 cec                   106496  2 drm_display_helper,amdgpu
 video                  81920  3 asus_wmi,amdgpu,asus_nb_wmi
+
+=== SUPERGFX MODE ===
+Integrated
+
+=== KERNEL COMMAND LINE ===
+BOOT_IMAGE=/@/boot/vmlinuz-linux-cachyos root=UUID=6065627a-7a9c-4cd7-865a-cb6cfcaa8ecf rw rootflags=subvol=@ nowatchdog nvme_load=YES zswap.enabled=0 splash loglevel=3 nvidia_drm.modeset=1
