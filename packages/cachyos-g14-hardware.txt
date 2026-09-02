@@ -13,7 +13,7 @@ ROG Zephyrus G14 GA401IV_GA401IV
 
 === GPU MODULES ===
 i2c_nvidia_gpu         16384  0
-amdgpu              18792448  47
+amdgpu              18792448  53
 drm_panel_backlight_quirks    12288  1 amdgpu
 drm_buddy              12288  1 amdgpu
 drm_suballoc_helper    24576  1 amdgpu
