@@ -1,0 +1,11 @@
+venvs are in /home/ganchy/.local/share/pipx/venvs
+apps are exposed on your $PATH at /home/ganchy/.local/bin
+manual pages are exposed at /home/ganchy/.local/share/man
+   package pywal16 3.8.15, installed using Python 3.14.6
+    - wal
+   package pywalfox 2.9.0, installed using Python 3.14.6
+    - pywalfox
+   package waypaper 2.8, installed using Python 3.14.6
+    - waypaper
+    - waypaperd
+    - man1/waypaper.1.gz
