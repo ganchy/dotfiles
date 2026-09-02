@@ -22,13 +22,14 @@ fi
 
 CHOICE="$(
     find "$ROOT" -type f \
-        \( -iname '*.jpg' \
-        -o -iname '*.jpeg' \
-        -o -iname '*.png' \
-        -o -iname '*.webp' \
-        -o -iname '*.gif' \) \
-        -print0 |
-    while IFS= read -r -d '' FILE; do
+    \( -iname '*.jpg' \
+    -o -iname '*.jpeg' \
+    -o -iname '*.png' \
+    -o -iname '*.webp' \
+    -o -iname '*.gif' \) \
+    -print0 |
+shuf -z |
+while IFS= read -r -d '' FILE; do
         REL="${FILE#"$ROOT"/}"
         printf '%s\t%s\n' "$REL" "$FILE"
     done |

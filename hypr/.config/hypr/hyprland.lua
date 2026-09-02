@@ -179,10 +179,10 @@ hl.window_rule({
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        gaps_in  = 4,
-        gaps_out = 12,
+        gaps_in  = 1,
+        gaps_out = 0,
 
-        border_size = 2,
+        border_size = 0,
 
 --          Old borders (static color)
 --        col = {
@@ -218,14 +218,14 @@ hl.config({
 
         blur = {
             enabled   = false,
-            size      = 3,
-            passes    = 1,
+            size      = 2,
+            passes    = 4,
             vibrancy  = 0.1696,
         },
     },
 
     animations = {
-        enabled = false,
+        enabled = true,
     },
 })
 
@@ -252,9 +252,9 @@ hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "
 hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
 hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "slide" })
+hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "slide" })
+hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "slide" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
@@ -445,29 +445,9 @@ end
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
-
--- Move/resize windows with mainMod + LMB/RMB and dragging
 -- Disable wofi and wallpaper-menu from being dragged
-hl.bind("SUPER + mouse:272", function()
-local w = hl.get_active_window()
-
-if w == nil then
-    return
-    end
-
-    local class = (w.class or ""):lower()
-
-    if class == "wallpaper-picker"
-        or class == "wofi"
-        then
-        return
-        end
-
-        hl.dispatch(hl.dsp.window.drag())
-        end, {
-            mouse = true,
-            drag = true,
-        })
+-- Move/resize windows with mainMod + LMB/RMB and dragging
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Laptop multimedia keys for volume and LCD brightness
