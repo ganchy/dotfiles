@@ -5,3 +5,4 @@ hide_scroll=true
 dynamic_lines=false
 use_search_box=false
 normal_window=true
+no_actions=true
