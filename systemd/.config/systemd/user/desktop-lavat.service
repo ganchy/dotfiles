@@ -1,0 +1,13 @@
+[Unit]
+Description=Desktop Lavat Blob Widget
+
+[Service]
+Type=simple
+
+ExecStart=/usr/bin/kitten panel --edge=none --layer=bottom --app-id=desktop-lavat --focus-policy=on-demand --columns=42 --lines=8 --margin-left=1506 --margin-top=402 -o background_opacity=0.75 -o window_padding_width=8 -o allow_remote_control=socket-only --listen-on=unix:@desktop-lavat %h/.local/bin/lavat-pywal
+
+Restart=always
+RestartSec=1
+
+#[Install]
+#WantedBy=default.target

@@ -102,7 +102,10 @@ hl.on("hyprland.shutdown", function ()
 hl.exec_cmd(
     "systemctl --user stop " ..
     "widget-visibility.service " ..
-    "desktop-nnn.service desktop-terminal.service"
+    "desktop-terminal.service" ..
+    "desktop-rmpc.service" ..
+    "desktop-cmatrix.service" ..
+    "desktop-lavat.service"
 )
 end)
 
@@ -114,20 +117,6 @@ end)
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
-
--- NVIDIA Wayland environment variables
-local env_vars = {
-    LIBVA_DRIVER_NAME = "nvidia",
-    XDG_SESSION_TYPE = "wayland",
-    GBM_BACKEND = "nvidia-drm",
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia",
-    NVD_BACKEND = "direct",
-}
-
-for key, val in pairs(env_vars) do
-    hl.env(key, val)
-    end
-
 
 -----------------------
 ----- PERMISSIONS -----

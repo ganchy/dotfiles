@@ -1,0 +1,20 @@
+[Unit]
+Description=Desktop cmatrix Widget
+
+[Service]
+ExecStart=/usr/bin/kitten panel \
+    --edge=none \
+    --layer=bottom \
+    --app-id=desktop-cmatrix \
+    --focus-policy=not-allowed \
+    --columns=42 \
+    --lines=8 \
+    --margin-left=14 \
+    --margin-top=402 \
+    -o background_opacity=0.75 \
+    -o window_padding_width=8 \
+    -o allow_remote_control=socket-only \
+    --listen-on=unix:@desktop-cmatrix \
+    /usr/bin/cmatrix -b -u 10 -C blue
+
+

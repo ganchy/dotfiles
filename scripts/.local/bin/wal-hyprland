@@ -161,3 +161,5 @@ done
 if command -v pywalfox >/dev/null 2>&1; then
     pywalfox update >/dev/null 2>&1 &
 fi
+
+systemctl --user restart desktop-lavat.service

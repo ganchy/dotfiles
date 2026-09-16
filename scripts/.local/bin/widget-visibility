@@ -1,41 +1,47 @@
 #!/usr/bin/fish
 
-set NNN_SOCKET "unix:@desktop-nnn"
+# Disabled for now; retained in case the widgets are restored later.
+# set NNN_SOCKET "unix:@desktop-nnn"
 set TERMINAL_SOCKET "unix:@desktop-terminal"
 set RMPC_SOCKET "unix:@desktop-rmpc"
-set KEYS_SOCKET "unix:@desktop-keys"
+set LAVAT_SOCKET "unix:@desktop-lavat"
+set CMATRIX_SOCKET "unix:@desktop-cmatrix"
+# set KEYS_SOCKET "unix:@desktop-keys"
 
 function show_widgets
-    kitten @ --to="$NNN_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    # kitten @ --to="$NNN_SOCKET" resize-os-window --action=show >/dev/null 2>&1
     kitten @ --to="$TERMINAL_SOCKET" resize-os-window --action=show >/dev/null 2>&1
     kitten @ --to="$RMPC_SOCKET" resize-os-window --action=show >/dev/null 2>&1
-    kitten @ --to="$KEYS_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    kitten @ --to="$LAVAT_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    kitten @ --to="$CMATRIX_SOCKET" resize-os-window --action=show >/dev/null 2>&1
+    # kitten @ --to="$KEYS_SOCKET" resize-os-window --action=show >/dev/null 2>&1
 end
 
 function hide_widgets
-    kitten @ --to="$NNN_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    # kitten @ --to="$NNN_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
     kitten @ --to="$TERMINAL_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
     kitten @ --to="$RMPC_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
-    kitten @ --to="$KEYS_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    kitten @ --to="$LAVAT_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    kitten @ --to="$CMATRIX_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
+    # kitten @ --to="$KEYS_SOCKET" resize-os-window --action=hide >/dev/null 2>&1
 end
 
 function update_widgets
     set ACTIVE_WS (hyprctl activeworkspace -j | jq -r '.id')
 
-
     set WINDOW_COUNT (
-    hyprctl clients -j | jq --argjson ws "$ACTIVE_WS" '
-    [
-        .[]
-        | select(.workspace.id == $ws)
-        | ((.class // "") | ascii_downcase) as $class
-        | select(
-            $class != "waypaper"
-            and $class != "wofi"
-            and $class != "wallpaper-picker"
-        )
-    ] | length'
-)
+        hyprctl clients -j | jq --argjson ws "$ACTIVE_WS" '
+        [
+            .[]
+            | select(.workspace.id == $ws)
+            | ((.class // "") | ascii_downcase) as $class
+            | select(
+                $class != "waypaper"
+                and $class != "wofi"
+                and $class != "wallpaper-picker"
+            )
+        ] | length'
+    )
 
     if test "$WINDOW_COUNT" -eq 0
         show_widgets
@@ -44,15 +50,15 @@ function update_widgets
     end
 end
 
-# Wait until all widget sockets are available.
+# Wait until enabled widget sockets are available.
 while true
     set ready 1
 
     for socket in \
-        "$NNN_SOCKET" \
         "$TERMINAL_SOCKET" \
         "$RMPC_SOCKET" \
-        "$KEYS_SOCKET"
+        "$LAVAT_SOCKET" \
+        "$CMATRIX_SOCKET"
 
         if not kitten @ --to="$socket" ls >/dev/null 2>&1
             set ready 0
