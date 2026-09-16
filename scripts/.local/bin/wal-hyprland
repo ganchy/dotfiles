@@ -95,7 +95,7 @@ input-field {
     font_color = $FOREGROUND
 
     fade_on_empty = false
-    rounding = 15
+    rounding = 0
 
     position = 0, -20
     halign = center
